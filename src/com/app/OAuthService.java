@@ -70,7 +70,7 @@ public class OAuthService {
 		System.out.println(tokenMap.get("code"));
 		
 		
-		System.out.println("Press any key to continue...");
+		System.out.println("Press ENTER to continue...");
         try
         {
             System.in.read();
