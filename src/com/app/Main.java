@@ -40,12 +40,26 @@ public class Main {
 		
 		// carry out different api calls -->
 		
-		System.out.println("Daily Summary for last 7 days: ");
+		System.out.println("Daily Summary for last 14 days: ");
 		
-		double walkingDuration = 0;
-		double totalDuration = 0;
+		List<MovesDay> movesDays = apiService.getLastTwoWeeksDailySummary(accessToken);
+		double co2e = processDailyActivities(movesDays);
 		
-		List<MovesDay> movesDays = apiService.getLastWeekDailySummary(accessToken);
+		System.out.println("Total CO2e for last 14 days: " + 
+				co2e);
+	}
+	
+	private static double processDailyActivities(List<MovesDay> movesDays) {
+
+		double walkingDistance = 0;
+		double cyclingDistance = 0;
+		double airplaneDistance = 0;
+		double undergroundDistance = 0;
+		double tramDistance = 0;
+		double busDistance = 0;
+		double transportDistance = 0;
+		
+		
 		for (MovesDay movesDay : movesDays) {
 			System.out.println(movesDay.getDate() + " : ");
 			List<MovesSummary> movesSummaries = movesDay.getSummary();
@@ -57,16 +71,41 @@ public class Main {
 					System.out.println("\t\tDuration: " + movesSummary.getDuration());
 					System.out.println("\t\tDistance: " + movesSummary.getDistance());
 					
+					// activity is walking or running
 					if (movesSummary.getSteps() != 0) {
-						walkingDuration += movesSummary.getDistance();
+						walkingDistance += movesSummary.getDistance();
 					}
-					totalDuration += movesSummary.getDistance();
+					else if (movesSummary.getActivity().equals("cycling")) {
+						cyclingDistance += movesSummary.getDistance();
+					}
+					else if (movesSummary.getActivity().equals("airplane")) {
+						airplaneDistance += movesSummary.getDistance();
+					}
+					else if (movesSummary.getActivity().equals("underground")) {
+						airplaneDistance += movesSummary.getDistance();
+					}
+					else if (movesSummary.getActivity().equals("tram")) {
+						tramDistance += movesSummary.getDistance();
+					}
+					else if (movesSummary.getActivity().equals("bus")) {
+						busDistance += movesSummary.getDistance();
+					}
+					else if (movesSummary.getGroup() != null && 
+							movesSummary.getGroup().equals("transport")) {
+						transportDistance += movesSummary.getDistance();
+					}
 				}
 			}
 		}
 		
-		System.out.println("Total duration spent walking/running vs transport: " 
-				+ ((walkingDuration/totalDuration)*100) + "%");
+		// multiple distances in km by coefficients
+		return ((walkingDistance/1000) * Constants.WALKING_CO2E_PER_KM) + 
+				((cyclingDistance/1000) * Constants.BIKING_CO2E_PER_KM) +
+				((airplaneDistance/1000) * Constants.AIR_KG_CO2_PER_PASSENGER_KM) +
+				((undergroundDistance/1000) * Constants.SUBWAY_KG_CO2_PER_PASSENGER_KM) +
+				((tramDistance/1000) * Constants.STREETCAR_KG_CO2_PER_PASSENGER_KM) +
+				((busDistance/1000) * Constants.BUS_KG_CO2_PER_PASSENGER_KM) +
+			((transportDistance/1000) * Constants.CAR_KG_CO2_PER_PASSENGER_KM);
 	}
 	
 	private static String loadAccessTokenFromFile() {

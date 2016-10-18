@@ -21,9 +21,9 @@ import com.google.gson.reflect.TypeToken;
 
 public class ApiService {
 
-	public List<MovesDay> getLastWeekDailySummary(String accessToken) throws ClientProtocolException, IOException {
+	public List<MovesDay> getLastTwoWeeksDailySummary(String accessToken) throws ClientProtocolException, IOException {
 		
-		String uri = "https://api.moves-app.com/api/1.1/user/summary/daily?pastDays=7";
+		String uri = "https://api.moves-app.com/api/1.1/user/summary/daily?pastDays=14";
 		
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet get = new HttpGet(uri);
@@ -41,6 +41,9 @@ public class ApiService {
 		while ((line = rd.readLine()) != null) {
 			result.append(line);
 		}
+		
+		System.out.println("\n\nRaw response:");
+		System.out.println(result.toString() + "\n\n");
 		
 		Gson gson = new GsonBuilder()
 			    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
