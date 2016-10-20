@@ -1,4 +1,4 @@
-package com.app;
+package com.app.service.moves;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -30,12 +30,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.app.Constants;
 import com.app.entity.TokenResponse;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class OAuthService {
+/**
+ * Carries out Moves API OAuth authentication to obtain and store
+ * access/refresh tokens. 
+ * 
+ * @author dan
+ */
+public class MovesOAuthService {
 	
 	public boolean validateAccessToken(String accessToken) throws ClientProtocolException, IOException {
 		String uri = "https://api.moves-app.com/oauth/v1/tokeninfo?access_token=" + accessToken;
@@ -100,7 +107,7 @@ public class OAuthService {
 	
 	private Map<String, String> getTokenMap() throws ClientProtocolException, IOException {
 		String uri = "https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=" 
-				+ Main.CLIENT_ID + "&scope=activity";
+				+ Constants.CLIENT_ID + "&scope=activity";
 
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(uri);
@@ -160,7 +167,7 @@ public class OAuthService {
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("auth_token", authToken));
 		urlParameters.add(new BasicNameValuePair("request_code", requestCode));
-		urlParameters.add(new BasicNameValuePair("client_id", Main.CLIENT_ID));
+		urlParameters.add(new BasicNameValuePair("client_id", Constants.CLIENT_ID));
 
 		try {
 			post.setEntity(new UrlEncodedFormEntity(urlParameters));
@@ -196,7 +203,7 @@ public class OAuthService {
 		urlParameters.add(new BasicNameValuePair("auth_token", authToken));
 		urlParameters.add(new BasicNameValuePair("request_code", requestCode));
 		urlParameters.add(new BasicNameValuePair("response_type", "code"));
-		urlParameters.add(new BasicNameValuePair("client_id", Main.CLIENT_ID));
+		urlParameters.add(new BasicNameValuePair("client_id", Constants.CLIENT_ID));
 		urlParameters.add(new BasicNameValuePair("redirect_uri", ""));
 		urlParameters.add(new BasicNameValuePair("scope", "activity"));
 		urlParameters.add(new BasicNameValuePair("state", ""));
@@ -233,8 +240,8 @@ public class OAuthService {
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
 		urlParameters.add(new BasicNameValuePair("code", authCode));
-		urlParameters.add(new BasicNameValuePair("client_id", Main.CLIENT_ID));
-		urlParameters.add(new BasicNameValuePair("client_secret", Main.CLIENT_SECRET));
+		urlParameters.add(new BasicNameValuePair("client_id", Constants.CLIENT_ID));
+		urlParameters.add(new BasicNameValuePair("client_secret", Constants.CLIENT_SECRET));
 		urlParameters.add(new BasicNameValuePair("redirect_uri", ""));
 		
 		try {
@@ -266,8 +273,8 @@ public class OAuthService {
 		String uri = "https://api.moves-app.com/oauth/v1/access_token?"
 				+ "grant_type=refresh_token&"
 				+ "refresh_token=" + refreshToken + "&"
-				+ "client_id=" + Main.CLIENT_ID + "&"
-				+ "client_secret=" + Main.CLIENT_SECRET;
+				+ "client_id=" + Constants.CLIENT_ID + "&"
+				+ "client_secret=" + Constants.CLIENT_SECRET;
 
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(uri);

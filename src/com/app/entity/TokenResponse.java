@@ -1,5 +1,10 @@
 package com.app.entity;
 
+/**
+ * OAuth response object.
+ * 
+ * @author dan
+ */
 public class TokenResponse {
 	public String accessToken;
 	public String tokenType;

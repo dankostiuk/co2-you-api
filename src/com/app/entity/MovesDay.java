@@ -2,6 +2,11 @@ package com.app.entity;
 
 import java.util.List;
 
+/**
+ * Moves API Day, as returned by API DailySummary call.
+ * 
+ * @author dan
+ */
 public class MovesDay {
 	private int date;
 	private List<MovesSummary> summary;

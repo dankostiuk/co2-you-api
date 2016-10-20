@@ -1,7 +1,18 @@
 package com.app;
 
+/**
+ * Maintained list of constants.
+ * 
+ * @author dan
+ */
 public class Constants {
 	
+	// -- Moves API Keys
+	public static final String CLIENT_ID = "d86A71Kz2I5PUC0anuoq67qquUn9Ul4z";
+	public static final String CLIENT_SECRET = "Rq7ckF2Z7bTdz1aQ8BQpFCG94z3TjG02C5qL6ExPLU4AKb6kfMlAh1ek0VkPRnJI";
+	
+	
+	// -- Moves API CO2e coefficients
 	public static final double WALKING_CO2E_PER_KM = 0.016;
 	public static final double BIKING_CO2E_PER_KM = 0.013;
 	
