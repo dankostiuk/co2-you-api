@@ -25,14 +25,14 @@ gulp.task('ts-compile', function () {
 // runs server with proxy to allow rest calls to 8080
 gulp.task('webserver', function() {
 	connect.server({
-		port: 5000,
+		port: process.env.PORT || 5000,
 		debug: true,
 		livereload: true,
 		middleware: function(req, res, next) {
 			return [(function() {
 				var url = require('url');
 		        var proxy = require('proxy-middleware');
-		        var options = url.parse('https://co2-you.herokuapp.com:8080/rest');
+		        var options = url.parse('http://localhost:8080/rest');
 		        options.route = '/rest';
 		        return proxy(options);
 			})() ];
