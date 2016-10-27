@@ -1,2 +1,1 @@
-web:    npm start
-api:    java $JAVA_OPTS -jar target/dependency/webapp-runner.jar --port 8080 target/*.war
+web:    java $JAVA_OPTS -jar target/dependency/webapp-runner.jar --port $PORT target/*.war
