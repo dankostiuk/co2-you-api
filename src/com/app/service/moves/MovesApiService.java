@@ -13,8 +13,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.app.Constants;
-import com.app.entity.MovesDay;
-import com.app.entity.MovesDay.MovesSummary;
+import com.app.entity.moves.MovesDay;
+import com.app.entity.moves.MovesDay.MovesSummary;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

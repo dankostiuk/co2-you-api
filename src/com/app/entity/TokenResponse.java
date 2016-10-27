@@ -11,6 +11,7 @@ public class TokenResponse {
 	public String expiresIn;
 	public String refreshToken;
 	public String userId;
+	public String idToken;
 	/**
 	 * @return the accessToken
 	 */
@@ -70,5 +71,17 @@ public class TokenResponse {
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	/**
+	 * @return the idToken
+	 */
+	public String getIdToken() {
+		return idToken;
+	}
+	/**
+	 * @param idToken the idToken to set
+	 */
+	public void setIdToken(String idToken) {
+		this.idToken = idToken;
 	}
 }

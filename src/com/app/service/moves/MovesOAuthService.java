@@ -107,7 +107,7 @@ public class MovesOAuthService {
 	
 	private Map<String, String> getTokenMap() throws ClientProtocolException, IOException {
 		String uri = "https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=" 
-				+ Constants.CLIENT_ID + "&scope=activity";
+				+ Constants.MOVES_CLIENT_ID + "&scope=activity";
 
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(uri);
@@ -167,7 +167,7 @@ public class MovesOAuthService {
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("auth_token", authToken));
 		urlParameters.add(new BasicNameValuePair("request_code", requestCode));
-		urlParameters.add(new BasicNameValuePair("client_id", Constants.CLIENT_ID));
+		urlParameters.add(new BasicNameValuePair("client_id", Constants.MOVES_CLIENT_ID));
 
 		try {
 			post.setEntity(new UrlEncodedFormEntity(urlParameters));
@@ -203,7 +203,7 @@ public class MovesOAuthService {
 		urlParameters.add(new BasicNameValuePair("auth_token", authToken));
 		urlParameters.add(new BasicNameValuePair("request_code", requestCode));
 		urlParameters.add(new BasicNameValuePair("response_type", "code"));
-		urlParameters.add(new BasicNameValuePair("client_id", Constants.CLIENT_ID));
+		urlParameters.add(new BasicNameValuePair("client_id", Constants.MOVES_CLIENT_ID));
 		urlParameters.add(new BasicNameValuePair("redirect_uri", ""));
 		urlParameters.add(new BasicNameValuePair("scope", "activity"));
 		urlParameters.add(new BasicNameValuePair("state", ""));
@@ -240,8 +240,8 @@ public class MovesOAuthService {
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
 		urlParameters.add(new BasicNameValuePair("code", authCode));
-		urlParameters.add(new BasicNameValuePair("client_id", Constants.CLIENT_ID));
-		urlParameters.add(new BasicNameValuePair("client_secret", Constants.CLIENT_SECRET));
+		urlParameters.add(new BasicNameValuePair("client_id", Constants.MOVES_CLIENT_ID));
+		urlParameters.add(new BasicNameValuePair("client_secret", Constants.MOVES_CLIENT_SECRET));
 		urlParameters.add(new BasicNameValuePair("redirect_uri", ""));
 		
 		try {
@@ -273,8 +273,8 @@ public class MovesOAuthService {
 		String uri = "https://api.moves-app.com/oauth/v1/access_token?"
 				+ "grant_type=refresh_token&"
 				+ "refresh_token=" + refreshToken + "&"
-				+ "client_id=" + Constants.CLIENT_ID + "&"
-				+ "client_secret=" + Constants.CLIENT_SECRET;
+				+ "client_id=" + Constants.MOVES_CLIENT_ID + "&"
+				+ "client_secret=" + Constants.MOVES_CLIENT_SECRET;
 
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpPost post = new HttpPost(uri);
