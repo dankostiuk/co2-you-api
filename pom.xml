@@ -137,6 +137,11 @@
 		    <artifactId>persistence-api</artifactId>
 		    <version>1.0</version>
 		</dependency>
+		<dependency> 
+		<groupId>org.hibernate</groupId> 
+			<artifactId>hibernate-entitymanager</artifactId> 
+			<version>5.1.0.Final</version> 
+		</dependency> 
  		<!-- Jersey 2.22.1 -->
 		<dependency>
 	   		<groupId>org.glassfish.jersey.containers</groupId>
