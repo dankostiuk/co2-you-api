@@ -1,11 +1,16 @@
 package com.app.manager;
 
+import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Persistence;
+
 
 /**
  * Abstract class responsible for carrying out 
@@ -26,6 +31,7 @@ public abstract class AbstractManager<T> {
 		_clazz = clazz;
 		_emf = Persistence.createEntityManagerFactory("Hibernate");
 		_em = _emf.createEntityManager();
+		
 	}
 	
 	public void writeTransaction(T object) {
@@ -62,6 +68,17 @@ public abstract class AbstractManager<T> {
 		 
 		T entity = resultList.get(0);
 		return entity;
+	}
+	
+	/**
+	 * Connect to Heroku db
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws SQLException
+	 */
+	private Connection getConnection() throws URISyntaxException, SQLException {
+	    String dbUrl = System.getenv("JDBC_DATABASE_URL");
+	    return DriverManager.getConnection(dbUrl);
 	}
 	
 	/**
