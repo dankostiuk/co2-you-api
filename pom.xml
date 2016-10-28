@@ -145,11 +145,13 @@
 		    <artifactId>persistence-api</artifactId>
 		    <version>1.0</version>
 		</dependency>
-		<dependency> 
-			<groupId>org.hibernate</groupId> 
-			<artifactId>hibernate-entitymanager</artifactId> 
-		<version>4.2.1.Final</version> 
-	</dependency> 
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-core</artifactId>
+		    <version>5.1.0.Final</version>
+		</dependency>
+
  		<!-- Jersey 2.22.1 -->
 		<dependency>
 	   		<groupId>org.glassfish.jersey.containers</groupId>
