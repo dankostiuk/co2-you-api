@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.eclipse.persistence.jpa.jpql.parser.DateTime;
+import org.joda.time.DateTime;
 
 /**
  * Model representing the MovesData entity.
