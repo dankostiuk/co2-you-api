@@ -37,7 +37,7 @@ public class MovesUserManager extends AbstractManager<MovesUser> {
 	 * @throws EntityNotFoundException If an error occurs.
 	 */
 	public MovesUser findMovesUserByUserId(String userId) throws EntityNotFoundException {
-		MovesUser movesUser = findTransaction("user_id", userId);
+		MovesUser movesUser = findTransaction("userId", userId);
 		
 		return movesUser;
 	}
