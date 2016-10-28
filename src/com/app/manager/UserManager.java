@@ -37,7 +37,7 @@ public class UserManager extends AbstractManager<User> {
 	 * @throws EntityNotFoundException If an error occurs.
 	 */
 	public User findUser(String userId) throws EntityNotFoundException {
-		User user = findTransaction("user_id", userId);
+		User user = findTransaction("userId", userId);
 		
 		return user;
 	}
