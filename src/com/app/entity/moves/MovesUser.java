@@ -23,16 +23,16 @@ public class MovesUser implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
-	@Column
+	@Column(name="user_id")
 	private String userId;
 	
-	@Column
+	@Column(name="access_token")
 	private String accessToken;
 	
-	@Column
+	@Column(name="refresh_token")
 	private String refreshToken;
 	
-	@Column
+	@Column(name="moves_user_id")
 	private Long movesUserId;
 	
 	public MovesUser() {

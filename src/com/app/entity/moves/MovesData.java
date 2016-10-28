@@ -25,13 +25,12 @@ public class MovesData implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
-	@Column
+	@Column(name="user_id")
 	private String userId;
 	
-	@Column
+	@Column(name="co2_e")
 	private double co2E;
 	
-	@Column
 	private DateTime timestamp;
 	
 	public MovesData() {

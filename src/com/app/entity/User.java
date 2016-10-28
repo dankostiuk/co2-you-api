@@ -23,13 +23,13 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
-	@Column
+	@Column(name="user_id")
 	private String userId;
 	
-	@Column
+	@Column(name="oauth_access_token")
 	private String oauthAccessToken;
 	
-	@Column
+	@Column(name="oauth_refresh_token")
 	private String oauthRefreshToken;
 	
 	public User() {
