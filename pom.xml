@@ -143,13 +143,9 @@
  		<dependency>
 		    <groupId>javax.persistence</groupId>
 		    <artifactId>persistence-api</artifactId>
-		    <version>1.0</version>
+		    <version>1.0.2</version>
 		</dependency>
-		<dependency> 
-		<groupId>org.hibernate</groupId> 
-			<artifactId>hibernate-entitymanager</artifactId> 
-			<version>5.1.0.Final</version> 
-		</dependency> 
+
  		<!-- Jersey 2.22.1 -->
 		<dependency>
 	   		<groupId>org.glassfish.jersey.containers</groupId>
@@ -184,12 +180,6 @@
 		    <artifactId>mysql-connector-java</artifactId>
 		    <version>5.1.37</version>
 		</dependency>
-
-		<dependency> 
-			<groupId>org.hibernate</groupId> 
-			<artifactId>hibernate-entitymanager</artifactId> 
-			<version>5.1.0.Final</version> 
-		</dependency> 
 		
 	</dependencies>
 </project>
