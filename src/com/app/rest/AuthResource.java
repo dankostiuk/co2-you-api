@@ -117,8 +117,7 @@ public class AuthResource {
 		// get the user_id from userInfo returned from auth0
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode array = objectMapper.readValue(auth0UserInfo, JsonNode.class);
-		JsonNode object = array.get(1);
-		String userId = object.get("user_id").textValue();
+		String userId = array.get("user_id").textValue();
 		
 		// save if user doesn't exist in db, otherwise continue
 		User user = _userManager.findUser(userId);
