@@ -26,12 +26,26 @@ import org.apache.http.message.BasicNameValuePair;
 
 import com.app.Constants;
 import com.app.entity.TokenResponse;
+import com.app.entity.User;
+import com.app.entity.moves.MovesData;
+import com.app.entity.moves.MovesUser;
+import com.app.manager.MovesDataManager;
+import com.app.manager.MovesUserManager;
+import com.app.manager.UserManager;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Path("/auth")
 public class AuthResource {
+	
+	UserManager _userManager = new UserManager();
+	MovesUserManager _movesUserManager = new MovesUserManager();
+	MovesDataManager _movesDataManager = new MovesDataManager();
 	
 	/**
 	 * Process Auth0 callback
@@ -81,9 +95,66 @@ public class AuthResource {
 		
 		HttpResponse getResponse = client.execute(get);
 		
-		String getResponseString = responseToString(getResponse);
+		String auth0UserInfo = responseToString(getResponse);
 		
-		return Response.status(200).entity(getResponseString).build();
+		//TODO: analyze all 3 social logins + manual login and figure out
+		// what kind of userId to persist to user table.
+		// next, check if userId already has a moves access_token, if not, prompt for Moves PIN
+			// on submit of Moves PIN, display 2 week co2e
+		// if userId has moves access_token, display latest 2 week co2e
+		
+		String entity = processUsername(auth0UserInfo);
+		
+		return Response.status(200).entity(entity).build();
+	}
+	
+	/*
+	 * TODO: spit this into manageable methods
+	 * 
+	 */
+	private String processUsername(String auth0UserInfo) throws JsonParseException, JsonMappingException, IOException {
+		
+		// get the user_id from userInfo returned from auth0
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode array = objectMapper.readValue(auth0UserInfo, JsonNode.class);
+		JsonNode object = array.get(1);
+		String userId = object.get("user_id").textValue();
+		
+		// save if user doesn't exist in db, otherwise continue
+		User user = _userManager.findUser(userId);
+		if (user == null) {
+			User newUser = new User();
+			newUser.setUserId(userId);
+			_userManager.saveUser(newUser);
+			
+			// user saved, send back status to tell frontend to prompt for 5-digit Moves PIN
+			return "Please enter 5 digit Moves PIN";
+		} else {
+			
+			// check if user authenticated with Moves
+			
+			MovesUser movesUser = _movesUserManager.findMovesUserByUserId(userId);
+			
+			String movesAccessToken = "";
+			if (movesUser == null) {
+				// send back status
+				// to tell frontend to prompt for 5-digit Moves PIN
+				return "Please enter 5 digit Moves PIN";
+			} else {
+				movesAccessToken = movesUser.getAccessToken();
+				if (movesAccessToken == null) {
+					// user exists but has not connected to moves, send back status
+					// to tell frontend to prompt for 5-digi Moves PIN
+					return "Please enter 5 digit Moves PIN";
+				}
+			}
+			
+			// Moves accessToken exists, display latest value
+			List<MovesData> movesDataList = _movesDataManager.getAll();
+			return String.valueOf(movesDataList.get(0).getCo2E());
+		}
+			
+		
 	}
 	
 	private String responseToString(HttpResponse response) 

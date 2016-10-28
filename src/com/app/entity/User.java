@@ -23,105 +23,80 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
-	private String username;
+	@Column
+	private String userId;
 	
-	@Column(name="access_token")
-	private String accessToken;
+	@Column
+	private String oauthAccessToken;
 	
-	@Column(name="facebook_id")
-	private String facebookId;
-	
-	@Column(name="google_id")
-	private String googleId;
-	
-	@Column(name="linkedin_id")
-	private String linkedInId;
+	@Column
+	private String oauthRefreshToken;
 	
 	public User() {
 		
 	}
 	
-	public User(Long id, String username, String accessToken, String facebookId, 
-			String googleId, String linkedInId) {
+	public User(Long id, String userId, String oathAccessToken, String oathRefreshToken) {
 		super();
 		this.id = id;
-		this.username = username;
-		this.accessToken = accessToken;
-		this.facebookId = facebookId;
-		this.googleId = googleId;
-		this.linkedInId = linkedInId;
+		this.userId = userId;
+		this.oauthAccessToken = oathAccessToken;
+		this.oauthRefreshToken = oathRefreshToken;
 	}
 
+	/**
+	 * @return the id
+	 */
 	public Long getId() {
 		return id;
 	}
-	
+
+	/**
+	 * @param id the id to set
+	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getUsername() {
-		return username;
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
+
+	/**
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
 	}
 
 	/**
-	 * @return the accessToken
+	 * @param userId the userId to set
 	 */
-	public String getAccessToken() {
-		return accessToken;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	/**
-	 * @param accessToken the accessToken to set
+	 * @return the oauthAccessToken
 	 */
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
+	public String getOauthAccessToken() {
+		return oauthAccessToken;
 	}
 
 	/**
-	 * @return the facebookId
+	 * @param oauthAccessToken the oauthAccessToken to set
 	 */
-	public String getFacebookId() {
-		return facebookId;
+	public void setOauthAccessToken(String oauthAccessToken) {
+		this.oauthAccessToken = oauthAccessToken;
 	}
 
 	/**
-	 * @param facebookId the facebookId to set
+	 * @return the oauthRefreshToken
 	 */
-	public void setFacebookId(String facebookId) {
-		this.facebookId = facebookId;
+	public String getOauthRefreshToken() {
+		return oauthRefreshToken;
 	}
 
 	/**
-	 * @return the googleId
+	 * @param oauthRefreshToken the oathRefreshToken to set
 	 */
-	public String getGoogleId() {
-		return googleId;
+	public void setOauthRefreshToken(String oauthRefreshToken) {
+		this.oauthRefreshToken = oauthRefreshToken;
 	}
-
-	/**
-	 * @param googleId the googleId to set
-	 */
-	public void setGoogleId(String googleId) {
-		this.googleId = googleId;
-	}
-
-	/**
-	 * @return the linkedInId
-	 */
-	public String getLinkedInId() {
-		return linkedInId;
-	}
-
-	/**
-	 * @param linkedInId the linkedInId to set
-	 */
-	public void setLinkedInId(String linkedInId) {
-		this.linkedInId = linkedInId;
-	}
-	
-	
 }

@@ -62,7 +62,7 @@ public class MovesOAuthService {
 		return false;
 	}
 	
-	public void authorize() {
+	public String authorizeAndReturnAccessToken() {
 		
 		System.out.println("Starting auth process from scratch.. Enter code below in Moves app:");
 		
@@ -86,6 +86,7 @@ public class MovesOAuthService {
         {}  
 		
 		String authCode;
+		TokenResponse tokenResponse = new TokenResponse();
 		try {
 			if (postCheckAuthorized(tokenMap)) {
 				authCode = authorizeAndRedirect(tokenMap);
@@ -95,7 +96,7 @@ public class MovesOAuthService {
 				Gson gson = new GsonBuilder()
 					    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 					    .create();
-				TokenResponse tokenResponse = gson.fromJson(response, TokenResponse.class);
+				tokenResponse = gson.fromJson(response, TokenResponse.class);
 				
 				saveTokenResponseToFile(tokenResponse);
 			}
@@ -103,6 +104,8 @@ public class MovesOAuthService {
 		} catch (IOException e) {
 
 		}
+		
+		return tokenResponse.getAccessToken();
 	}
 	
 	private Map<String, String> getTokenMap() throws ClientProtocolException, IOException {
@@ -266,7 +269,7 @@ public class MovesOAuthService {
 		return result.toString();
 	}
 	
-	public void refreshAccessToken() throws ClientProtocolException, IOException {
+	public String refreshAndReturnAccessToken() throws ClientProtocolException, IOException {
 		
 		String refreshToken = loadRefreshTokenFromFile();
 		
@@ -297,6 +300,8 @@ public class MovesOAuthService {
 		
 		TokenResponse tokenResponse = gson.fromJson(result.toString(), TokenResponse.class);
 		saveTokenResponseToFile(tokenResponse);
+		
+		return tokenResponse.getAccessToken();
 	}
 	
 	private static String loadRefreshTokenFromFile() {

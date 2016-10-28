@@ -5,11 +5,13 @@
             org.hibernate.jpa.HibernatePersistenceProvider
         </provider>
         <class>com.app.entity.User</class>
+        <class>com.app.entity.moves.MovesUser</class>
+        <class>com.app.entity.moves.MovesData</class>
 		<properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-            <property name="javax.persistence.jdbc.url" value="hidden" />
-            <property name="javax.persistence.jdbc.user" value="hidden" />
-            <property name="javax.persistence.jdbc.password" value="hidden" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://vhw3t8e71xdz9k14.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/vrzkqyhvd5eju63v" />
+            <property name="javax.persistence.jdbc.user" value="mo88uz8m17a0jexm" />
+            <property name="javax.persistence.jdbc.password" value="omc1bu22eibjkpyo" />
             <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.logging.level" value="INFO"/>
     </properties>

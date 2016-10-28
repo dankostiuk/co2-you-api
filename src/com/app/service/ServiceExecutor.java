@@ -33,16 +33,16 @@ public class ServiceExecutor {
 		try {
 			if (!authService.validateAccessToken(FileReaderWriter.loadAccessTokenFromFile())) {
 					// try refreshing first
-					authService.refreshAccessToken();
+					authService.refreshAndReturnAccessToken();
 					
 					// if still cannot validate token, authorize
 					if (!authService.validateAccessToken(FileReaderWriter.loadAccessTokenFromFile())) {
-						authService.authorize();
+						authService.authorizeAndReturnAccessToken();
 					}
 			}
 		} catch (Exception e) {
 			// if an error occured, authorize from scratch
-			authService.authorize();				
+			authService.authorizeAndReturnAccessToken();				
 		}
 		
 		String accessToken = FileReaderWriter.loadAccessTokenFromFile();
