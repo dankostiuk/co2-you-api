@@ -63,7 +63,7 @@ public abstract class AbstractManager<T> {
 		 
 		if (resultList.isEmpty())
 		{
-			throw new EntityNotFoundException("Entity could not be found.");
+			return null;
 		}
 		 
 		T entity = resultList.get(0);
