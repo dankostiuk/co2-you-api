@@ -29,7 +29,7 @@ public class User implements Serializable {
 	@Column(name="oauth_access_token")
 	private String oauthAccessToken;
 	
-	@Column(name="oauth_refresh_token")
+	@Column(name="oath_refresh_token")
 	private String oauthRefreshToken;
 	
 	public User() {
