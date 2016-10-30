@@ -8,15 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.hibernate.annotations.Table;
-
 /**
  * Model representing the MovesUser entity.
  * 
  * @author dan
  */
 @Entity
-@Table(indexes = {}, appliesTo = "MovesUser")
 public class MovesUser implements Serializable {
 	private static final long serialVersionUID = 1L;
 

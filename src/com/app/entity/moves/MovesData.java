@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.hibernate.annotations.Table;
 import org.joda.time.DateTime;
 
 /**
@@ -17,7 +16,6 @@ import org.joda.time.DateTime;
  * @author dan
  */
 @Entity
-@Table(indexes = {}, appliesTo = "MovesData")
 public class MovesData implements Serializable {
 	private static final long serialVersionUID = 1L;
 
