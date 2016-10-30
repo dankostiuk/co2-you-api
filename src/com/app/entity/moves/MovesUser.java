@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Model representing the MovesUser entity.
@@ -14,6 +15,7 @@ import javax.persistence.Id;
  * @author dan
  */
 @Entity
+@Table(name = "MovesUser")
 public class MovesUser implements Serializable {
 	private static final long serialVersionUID = 1L;
 
