@@ -10,6 +10,7 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -43,17 +44,12 @@ public class QuartzListener implements ServletContextListener {
              // Setup the Job class and the Job group
              JobDetail job = newJob(FetchDataJob.class).withIdentity(
                              "CronQuartzJob", "Group").build();
-
-             // Create a Trigger that fires every 5 minutes.
-             //  Trigger trigger = newTrigger()
-             //  .withIdentity("TriggerName", "Group")
-             //  .withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?"))
-             //  .build();
             
-             // every 6 hours starting from next 6th hour of 0-24
+             // every 5 minutes
              Trigger trigger = newTrigger()
 				.withIdentity("TriggerName", "Group")
-				.withSchedule(CronScheduleBuilder.cronSchedule("0 0 0/6 1/1 * ? *"))
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(5)
+						.repeatForever())
 				.build();
  				
              // Setup the Job and Trigger with Scheduler & schedule jobs
