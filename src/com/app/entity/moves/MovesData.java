@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 /**
@@ -31,6 +32,8 @@ public class MovesData implements Serializable {
 	@Column(name="co2_e")
 	private double co2E;
 	
+	@Column(name="timestamp")
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
 	private DateTime timestamp;
 	
 	public MovesData() {
