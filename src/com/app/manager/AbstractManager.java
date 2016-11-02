@@ -124,11 +124,10 @@ public abstract class AbstractManager<T> {
 	}
 	
 	/**
-	 * Helper method to close EntityManager and EntityManagerFactor transactions
+	 * Helper method to close EntityManager transactions
 	 */
 	private void closeTransaction()
 	{
 		_em.close();
-		_emf.close();
 	}
 }
