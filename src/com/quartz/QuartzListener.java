@@ -45,10 +45,10 @@ public class QuartzListener implements ServletContextListener {
              JobDetail job = newJob(FetchDataJob.class).withIdentity(
                              "CronQuartzJob", "Group").build();
             
-             // every 5 minutes
+             // every 5 hours
              Trigger trigger = newTrigger()
 				.withIdentity("TriggerName", "Group")
-				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMinutes(5)
+				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInHours(5)
 						.repeatForever())
 				.build();
  				
