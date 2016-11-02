@@ -129,5 +129,6 @@ public abstract class AbstractManager<T> {
 	private void closeTransaction()
 	{
 		_em.close();
+		_emf.close()
 	}
 }
