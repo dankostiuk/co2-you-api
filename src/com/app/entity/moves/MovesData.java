@@ -9,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 /**
@@ -32,19 +31,15 @@ public class MovesData implements Serializable {
 	@Column(name="co2_e")
 	private double co2E;
 	
-	@Column(name="timestamp")
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	private DateTime timestamp;
 	
 	public MovesData() {
 		
 	}
 	
-	public MovesData(Long id, String userId, double co2E, DateTime timestamp) {
+	public MovesData(Long id, String userId, double co2E) {
 		super();
 		this.id = id;
 		this.co2E = co2E;
-		this.timestamp = timestamp;
 	}
 
 	/**
@@ -87,19 +82,5 @@ public class MovesData implements Serializable {
 	 */
 	public void setCo2E(double co2e) {
 		co2E = co2e;
-	}
-
-	/**
-	 * @return the timestamp
-	 */
-	public DateTime getTimestamp() {
-		return timestamp;
-	}
-
-	/**
-	 * @param timestamp the timestamp to set
-	 */
-	public void setTimestamp(DateTime timestamp) {
-		this.timestamp = timestamp;
 	}
 }

@@ -65,7 +65,6 @@ public class MovesServiceExecutor implements IServiceExecutor {
 				double co2e = _apiService.getLastTwoWeeksCarbon(accessToken);
 				
 				MovesData movesData = new MovesData();
-				movesData.setTimestamp(DateTime.now());
 				movesData.setCo2E(co2e);
 				movesData.setUserId(movesUser.getUserId());
 				
