@@ -68,7 +68,7 @@ public class AuthResource {
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("client_id", Constants.AUTH0_CLIENT_ID));
 		urlParameters.add(new BasicNameValuePair("client_secret", Constants.AUTH0_CLIENT_SECRET));
-		urlParameters.add(new BasicNameValuePair("redirect_uri", "https://co2-you.herokuapp.com/callback"));
+		urlParameters.add(new BasicNameValuePair("redirect_uri", "http://app.co2-you.com/rest/auth"));
 		urlParameters.add(new BasicNameValuePair("code", code));
 		urlParameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
 
