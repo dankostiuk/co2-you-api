@@ -75,7 +75,7 @@ public class MovesServiceExecutor implements IServiceExecutor {
 				//_authService.authorizeAndReturnAccessToken();		
 				
 				//TODO: properly handle this, we don't want to be authorizing by asking for pin here
-				System.out.println("Got exception: " + e.getStackTrace());
+				System.out.println("Got exception: " + e.getMessage());
 			}
 		}
 	}
