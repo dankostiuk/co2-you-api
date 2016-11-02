@@ -35,39 +35,70 @@ public abstract class AbstractManager<T> {
 	}
 	
 	public void writeTransaction(T object) {
-		startPersistence();
-		_em.persist(object);
-		_em.getTransaction().commit();
-		closePersistence();
+		try {
+			if (!_em.getTransaction().isActive()) {
+				startTransaction();
+			}
+			_em.persist(object);
+			_em.getTransaction().commit();
+		} finally {
+			closeTransaction();
+		}
 	}
 	
 	public T readTransaction(long id) {
-		T object = _em.find(_clazz, id);
-		
-		return object;
+		try {
+			if (!_em.getTransaction().isActive()) {
+				startTransaction();
+			}
+			
+			T object = _em.find(_clazz, id);
+
+			return object;
+		} finally {
+			closeTransaction();
+		}	
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<T> readAllTransaction() {
-		List<T> resultList = 
-			_em.createQuery("SELECT t from " + _clazz.getSimpleName() + " t")
-				.getResultList();
-
-		return resultList;
+		try {
+			if (!_em.getTransaction().isActive()) {
+				startTransaction();
+			}
+			
+			List<T> resultList = 
+				_em.createQuery("SELECT t from " + _clazz.getSimpleName() + " t")
+					.getResultList();
+			
+			return resultList;
+		} finally {
+			closeTransaction();
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	public T findTransaction(String key, String value) throws EntityNotFoundException {
-		List<T> resultList = _em.createQuery("SELECT t FROM " + _clazz.getSimpleName() + " t where t." + key + " = '" + value + "'")
-				 .getResultList();
-		 
-		if (resultList.isEmpty())
-		{
-			return null;
+		
+		try {
+			if (!_em.getTransaction().isActive()) {
+				startTransaction();
+			}
+			
+			List<T> resultList = _em.createQuery("SELECT t FROM " + _clazz.getSimpleName() + " t where t." + key + " = '" + value + "'")
+					 .getResultList();
+			
+			if (resultList.isEmpty())
+			{
+				return null;
+			}
+			 
+			T entity = resultList.get(0);
+			
+			return entity;
+		} finally {
+			closeTransaction();
 		}
-		 
-		T entity = resultList.get(0);
-		return entity;
 	}
 	
 	/**
@@ -84,7 +115,7 @@ public abstract class AbstractManager<T> {
 	/**
 	 * Helper method to start EntityManager transaction
 	 */
-	private void startPersistence()
+	private void startTransaction()
 	{
 		_em.getTransaction().begin();
 	}
@@ -92,7 +123,7 @@ public abstract class AbstractManager<T> {
 	/**
 	 * Helper method to close EntityManager and EntityManagerFactor transactions
 	 */
-	private void closePersistence()
+	private void closeTransaction()
 	{
 		_em.close();
 		_emf.close();

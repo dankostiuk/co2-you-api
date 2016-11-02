@@ -62,12 +62,18 @@ public class MovesOAuthService {
 		return false;
 	}
 	
+	/**
+	 * Get tokenMap from Moves HTML page and display on screen, prompting user to press okay
+	 * @return
+	 */
 	public String authorizeAndReturnAccessToken() {
 		
 		System.out.println("Starting auth process from scratch.. Enter code below in Moves app:");
 		
 		Map<String, String> tokenMap = null;
 	
+		//TODO: we could possibly redirect to moves PIN page instead of scraping the html
+		
 		try {
 			tokenMap = getTokenMap();
 		} catch (IOException e1) {
@@ -85,6 +91,9 @@ public class MovesOAuthService {
         catch(Exception e)
         {}  
 		
+        // once entered in Moves app, proceed to obtain authCode then perform final call to obtain 
+        // token response
+        
 		String authCode;
 		TokenResponse tokenResponse = new TokenResponse();
 		try {
@@ -269,9 +278,7 @@ public class MovesOAuthService {
 		return result.toString();
 	}
 	
-	public String refreshAndReturnAccessToken() throws ClientProtocolException, IOException {
-		
-		String refreshToken = loadRefreshTokenFromFile();
+	public TokenResponse refreshTokens(String refreshToken) throws ClientProtocolException, IOException {
 		
 		String uri = "https://api.moves-app.com/oauth/v1/access_token?"
 				+ "grant_type=refresh_token&"
@@ -299,9 +306,8 @@ public class MovesOAuthService {
 			    .create();
 		
 		TokenResponse tokenResponse = gson.fromJson(result.toString(), TokenResponse.class);
-		saveTokenResponseToFile(tokenResponse);
 		
-		return tokenResponse.getAccessToken();
+		return tokenResponse;
 	}
 	
 	private static String loadRefreshTokenFromFile() {

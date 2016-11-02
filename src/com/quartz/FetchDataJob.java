@@ -4,7 +4,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.app.service.ServiceExecutor;
+import com.app.service.ServiceLoader;
 
 /**
  * Entry point from web. Calls ServiceExecuter to carry out service calls.
@@ -18,8 +18,7 @@ public class FetchDataJob implements Job {
     public void execute(JobExecutionContext context)
             throws JobExecutionException {
         
-		ServiceExecutor serviceExecutor = new ServiceExecutor();
-		serviceExecutor.executeServices();
-
+		ServiceLoader serviceLoader = new ServiceLoader();
+		serviceLoader.runServices();
     }
 }

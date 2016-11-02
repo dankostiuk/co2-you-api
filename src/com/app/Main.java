@@ -2,7 +2,7 @@ package com.app;
 
 import java.io.IOException;
 
-import com.app.service.ServiceExecutor;
+import com.app.service.ServiceLoader;
 
 /**
  * Entry point from terminal. Calls ServiceExecuter to carry out service calls.
@@ -13,7 +13,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		
-		ServiceExecutor serviceExecutor = new ServiceExecutor();
-		serviceExecutor.executeServices();
+		ServiceLoader serviceLoader = new ServiceLoader();
+		serviceLoader.runServices();
 	}
 }

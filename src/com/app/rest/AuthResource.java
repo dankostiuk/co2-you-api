@@ -103,7 +103,7 @@ public class AuthResource {
 			// on submit of Moves PIN, display 2 week co2e
 		// if userId has moves access_token, display latest 2 week co2e
 		
-		String entity = processUsername(auth0UserInfo);
+		String entity = processUsername(auth0UserInfo, tokenResponse);
 		
 		return Response.status(200).entity(entity).build();
 	}
@@ -112,7 +112,8 @@ public class AuthResource {
 	 * TODO: spit this into manageable methods
 	 * 
 	 */
-	private String processUsername(String auth0UserInfo) throws JsonParseException, JsonMappingException, IOException {
+	private String processUsername(String auth0UserInfo, TokenResponse tokenResponse) 
+			throws JsonParseException, JsonMappingException, IOException {
 		
 		// get the user_id from userInfo returned from auth0
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -124,10 +125,12 @@ public class AuthResource {
 		if (user == null) {
 			User newUser = new User();
 			newUser.setUserId(userId);
+			newUser.setOauthAccessToken(tokenResponse.getAccessToken());
+			newUser.setOauthRefreshToken(tokenResponse.getRefreshToken());
 			_userManager.saveUser(newUser);
 			
-			// user saved, send back status to tell frontend to prompt for 5-digit Moves PIN
-			return "Please enter 5 digit Moves PIN";
+			// user saved, send back status to tell frontend
+			return "Saved new user " + newUser.getUserId();
 		} else {
 			
 			// check if user authenticated with Moves
@@ -137,8 +140,9 @@ public class AuthResource {
 			String movesAccessToken = "";
 			if (movesUser == null) {
 				// send back status
-				// to tell frontend to prompt for 5-digit Moves PIN
-				return "Please enter 5 digit Moves PIN";
+				// to tell frontend to ask user to enter 5-digit PIN into moves
+				// a movesUser will then get created as a result of this
+				return "Please enter 5 digit Moves PIN into app and press submit";
 			} else {
 				movesAccessToken = movesUser.getAccessToken();
 				if (movesAccessToken == null) {
