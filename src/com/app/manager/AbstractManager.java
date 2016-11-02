@@ -30,15 +30,11 @@ public abstract class AbstractManager<T> {
 	public AbstractManager(Class<T> clazz) {
 		_clazz = clazz;
 		_emf = Persistence.createEntityManagerFactory("Hibernate");
-		_em = _emf.createEntityManager();
-		
 	}
 	
 	public void writeTransaction(T object) {
 		try {
-			if (!_em.getTransaction().isActive()) {
-				startTransaction();
-			}
+			startTransaction();
 			_em.persist(object);
 			_em.getTransaction().commit();
 		} finally {
@@ -48,10 +44,7 @@ public abstract class AbstractManager<T> {
 	
 	public T readTransaction(long id) {
 		try {
-			if (!_em.getTransaction().isActive()) {
-				startTransaction();
-			}
-			
+			startTransaction();
 			T object = _em.find(_clazz, id);
 			_em.getTransaction().commit();
 
@@ -64,10 +57,7 @@ public abstract class AbstractManager<T> {
 	@SuppressWarnings("unchecked")
 	public List<T> readAllTransaction() {
 		try {
-			if (!_em.getTransaction().isActive()) {
-				startTransaction();
-			}
-			
+			startTransaction();
 			List<T> resultList = 
 				_em.createQuery("SELECT t from " + _clazz.getSimpleName() + " t")
 					.getResultList();
@@ -83,10 +73,7 @@ public abstract class AbstractManager<T> {
 	public T findTransaction(String key, String value) throws EntityNotFoundException {
 		
 		try {
-			if (!_em.getTransaction().isActive()) {
-				startTransaction();
-			}
-			
+			startTransaction();
 			List<T> resultList = _em.createQuery("SELECT t FROM " + _clazz.getSimpleName() + " t where t." + key + " = '" + value + "'")
 					 .getResultList();
 			_em.getTransaction().commit();
@@ -120,6 +107,7 @@ public abstract class AbstractManager<T> {
 	 */
 	private void startTransaction()
 	{
+		_em = _emf.createEntityManager();
 		_em.getTransaction().begin();
 	}
 	
@@ -129,6 +117,5 @@ public abstract class AbstractManager<T> {
 	private void closeTransaction()
 	{
 		_em.close();
-		_emf.close()
 	}
 }
