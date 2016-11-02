@@ -53,6 +53,7 @@ public abstract class AbstractManager<T> {
 			}
 			
 			T object = _em.find(_clazz, id);
+			_em.getTransaction().commit();
 
 			return object;
 		} finally {
@@ -70,6 +71,7 @@ public abstract class AbstractManager<T> {
 			List<T> resultList = 
 				_em.createQuery("SELECT t from " + _clazz.getSimpleName() + " t")
 					.getResultList();
+			_em.getTransaction().commit();
 			
 			return resultList;
 		} finally {
@@ -87,6 +89,7 @@ public abstract class AbstractManager<T> {
 			
 			List<T> resultList = _em.createQuery("SELECT t FROM " + _clazz.getSimpleName() + " t where t." + key + " = '" + value + "'")
 					 .getResultList();
+			_em.getTransaction().commit();
 			
 			if (resultList.isEmpty())
 			{
