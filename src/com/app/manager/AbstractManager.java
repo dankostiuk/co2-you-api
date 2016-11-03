@@ -12,7 +12,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-
 /**
  * Abstract class responsible for carrying out 
  * low-level transactions on the ORM.
@@ -30,7 +29,10 @@ public abstract class AbstractManager<T> {
 	
 	public AbstractManager(Class<T> clazz) {
 		_clazz = clazz;
-		_emf = Persistence.createEntityManagerFactory("Hibernate");
+		
+		if (_emf == null) {
+			_emf = Persistence.createEntityManagerFactory("Hibernate");	
+		}
 	}
 	
 	public void writeTransaction(T object) {
