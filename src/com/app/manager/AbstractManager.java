@@ -34,7 +34,9 @@ public abstract class AbstractManager<T> {
 	
 	public void writeTransaction(T object) {
 		try {
-			startTransaction();
+			if (!_em.isOpen()) {
+				startTransaction();
+			}
 			_em.persist(object);
 			_em.getTransaction().commit();
 		} finally {
@@ -44,7 +46,9 @@ public abstract class AbstractManager<T> {
 	
 	public T readTransaction(long id) {
 		try {
-			startTransaction();
+			if (!_em.isOpen()) {
+				startTransaction();
+			}
 			T object = _em.find(_clazz, id);
 			_em.getTransaction().commit();
 
@@ -57,7 +61,9 @@ public abstract class AbstractManager<T> {
 	@SuppressWarnings("unchecked")
 	public List<T> readAllTransaction() {
 		try {
-			startTransaction();
+			if (!_em.isOpen()) {
+				startTransaction();
+			}
 			List<T> resultList = 
 				_em.createQuery("SELECT t from " + _clazz.getSimpleName() + " t")
 					.getResultList();
@@ -73,7 +79,9 @@ public abstract class AbstractManager<T> {
 	public T findTransaction(String key, String value) throws EntityNotFoundException {
 		
 		try {
-			startTransaction();
+			if (!_em.isOpen()) {
+				startTransaction();
+			}
 			List<T> resultList = _em.createQuery("SELECT t FROM " + _clazz.getSimpleName() + " t where t." + key + " = '" + value + "'")
 					 .getResultList();
 			_em.getTransaction().commit();
