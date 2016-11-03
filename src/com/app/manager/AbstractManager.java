@@ -9,6 +9,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 
@@ -33,26 +34,33 @@ public abstract class AbstractManager<T> {
 	}
 	
 	public void writeTransaction(T object) {
+		startTransaction();
 		try {
-			if (!_em.isOpen()) {
-				startTransaction();
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				_em.persist(object);
+				t.commit();
+			} finally {
+				if (t.isActive()) t.rollback();
 			}
-			_em.persist(object);
-			_em.getTransaction().commit();
 		} finally {
 			closeTransaction();
 		}
 	}
 	
 	public T readTransaction(long id) {
+		startTransaction();
 		try {
-			if (!_em.isOpen()) {
-				startTransaction();
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				T object = _em.find(_clazz, id);
+				t.commit();
+				return object;
+			} finally {
+				if (t.isActive()) t.rollback();
 			}
-			T object = _em.find(_clazz, id);
-			_em.getTransaction().commit();
-
-			return object;
 		} finally {
 			closeTransaction();
 		}	
@@ -60,16 +68,19 @@ public abstract class AbstractManager<T> {
 	
 	@SuppressWarnings("unchecked")
 	public List<T> readAllTransaction() {
+		startTransaction();
 		try {
-			if (!_em.isOpen()) {
-				startTransaction();
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				List<T> resultList = 
+						_em.createQuery("SELECT t from " + _clazz.getSimpleName() + " t")
+							.getResultList();
+				t.commit();
+				return resultList;
+			} finally {
+				if (t.isActive()) t.rollback();
 			}
-			List<T> resultList = 
-				_em.createQuery("SELECT t from " + _clazz.getSimpleName() + " t")
-					.getResultList();
-			_em.getTransaction().commit();
-			
-			return resultList;
 		} finally {
 			closeTransaction();
 		}
@@ -77,23 +88,26 @@ public abstract class AbstractManager<T> {
 	
 	@SuppressWarnings("unchecked")
 	public T findTransaction(String key, String value) throws EntityNotFoundException {
-		
+		startTransaction();
 		try {
-			if (!_em.isOpen()) {
-				startTransaction();
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				List<T> resultList = _em.createQuery("SELECT t FROM " + _clazz.getSimpleName() + " t where t." + key + " = '" + value + "'")
+						 .getResultList();
+				t.commit();
+				
+				if (resultList.isEmpty())
+				{
+					return null;
+				}
+				 
+				T entity = resultList.get(0);
+				
+				return entity;
+			} finally {
+				if (t.isActive()) t.rollback();
 			}
-			List<T> resultList = _em.createQuery("SELECT t FROM " + _clazz.getSimpleName() + " t where t." + key + " = '" + value + "'")
-					 .getResultList();
-			_em.getTransaction().commit();
-			
-			if (resultList.isEmpty())
-			{
-				return null;
-			}
-			 
-			T entity = resultList.get(0);
-			
-			return entity;
 		} finally {
 			closeTransaction();
 		}
@@ -116,7 +130,6 @@ public abstract class AbstractManager<T> {
 	private void startTransaction()
 	{
 		_em = _emf.createEntityManager();
-		_em.getTransaction().begin();
 	}
 	
 	/**
