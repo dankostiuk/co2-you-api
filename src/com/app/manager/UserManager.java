@@ -3,6 +3,7 @@ package com.app.manager;
 import java.util.List;
 
 import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 
 import com.app.entity.User;
@@ -16,6 +17,10 @@ public class UserManager extends AbstractManager<User> {
 	
 	public UserManager() {
 		super(User.class);
+	}
+	
+	public UserManager(EntityManagerFactory emf) {
+		super(User.class, emf);
 	}
 	
 	/**

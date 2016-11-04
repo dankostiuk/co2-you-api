@@ -44,8 +44,8 @@ import com.google.gson.GsonBuilder;
 public class AuthResource {
 	
 	UserManager _userManager = new UserManager();
-	MovesUserManager _movesUserManager = new MovesUserManager();
-	MovesDataManager _movesDataManager = new MovesDataManager();
+	MovesUserManager _movesUserManager = new MovesUserManager(_userManager.getEntityManagerFactory());
+	MovesDataManager _movesDataManager = new MovesDataManager(_userManager.getEntityManagerFactory());
 	
 	/**
 	 * Process Auth0 callback

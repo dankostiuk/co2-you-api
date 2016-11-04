@@ -29,10 +29,11 @@ public abstract class AbstractManager<T> {
 	
 	public AbstractManager(Class<T> clazz) {
 		_clazz = clazz;
-		
-		if (_emf == null) {
-			_emf = Persistence.createEntityManagerFactory("Hibernate");	
-		}
+	}
+	
+	public AbstractManager(Class<T> clazz, EntityManagerFactory emf) {
+		_clazz = clazz;
+		_emf = emf;
 	}
 	
 	public void writeTransaction(T object) {
@@ -131,6 +132,10 @@ public abstract class AbstractManager<T> {
 	 */
 	private void startTransaction()
 	{
+		if (_emf == null) {
+			_emf = Persistence.createEntityManagerFactory("Hibernate");	
+		}
+		
 		_em = _emf.createEntityManager();
 	}
 	
@@ -140,5 +145,9 @@ public abstract class AbstractManager<T> {
 	private void closeTransaction()
 	{
 		_em.close();
+	}
+	
+	public EntityManagerFactory getEntityManagerFactory() {
+		return _emf;
 	}
 }

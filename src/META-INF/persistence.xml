@@ -13,10 +13,12 @@
             <property name="javax.persistence.jdbc.user" value="mo88uz8m17a0jexm" />
             <property name="javax.persistence.jdbc.password" value="omc1bu22eibjkpyo" />
            	
+           		<!-- Configure Connection Pool -->
+           	<!-- TODO: implement connection pool later
            	<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
            	<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL57InnoDBDialect" />
            	
-           	<!-- Configure Connection Pool -->
+           
            	<property name="hibernate.connection.provider_class"
                 value="org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider" />
                 
@@ -24,6 +26,7 @@
 		    <property name="hibernate.c3p0.max_size" value="8" />
 		    <property name="hibernate.c3p0.timeout" value="60" />
 		    <property name="hibernate.c3p0.max_statements" value="5" />
+		     -->
     	</properties>
 	</persistence-unit>
 </persistence>

@@ -3,6 +3,7 @@ package com.app.manager;
 import java.util.List;
 
 import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 
 import com.app.entity.moves.MovesData;
@@ -17,6 +18,10 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	
 	public MovesDataManager() {
 		super(MovesData.class);
+	}
+	
+	public MovesDataManager(EntityManagerFactory emf) {
+		super(MovesData.class, emf);
 	}
 	
 	/**
