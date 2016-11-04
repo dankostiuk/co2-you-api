@@ -12,6 +12,12 @@
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://vhw3t8e71xdz9k14.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/vrzkqyhvd5eju63v" />
             <property name="javax.persistence.jdbc.user" value="mo88uz8m17a0jexm" />
             <property name="javax.persistence.jdbc.password" value="omc1bu22eibjkpyo" />
+           	
+           	<!-- Configure Connection Pool -->
+		    <property name="hibernate.c3p0.min_size" value="1" />
+		    <property name="hibernate.c3p0.max_size" value="10" />
+		    <property name="hibernate.c3p0.timeout" value="60" />
+		    <property name="hibernate.c3p0.max_statements" value="5" />
     	</properties>
 	</persistence-unit>
 </persistence>
