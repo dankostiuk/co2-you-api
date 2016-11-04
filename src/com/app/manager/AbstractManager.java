@@ -145,6 +145,9 @@ public abstract class AbstractManager<T> {
 	private void closeTransaction()
 	{
 		_em.close();
+		
+		//TODO: remove this emf close since it takes time to start emf
+		_emf.close();
 	}
 	
 	public EntityManagerFactory getEntityManagerFactory() {
