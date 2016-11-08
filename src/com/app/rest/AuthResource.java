@@ -25,8 +25,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.app.Constants;
+import com.app.entity.SummaryResponse;
 import com.app.entity.TokenResponse;
 import com.app.entity.User;
+import com.app.entity.SummaryResponse.SummaryType;
 import com.app.entity.moves.MovesData;
 import com.app.entity.moves.MovesUser;
 import com.app.manager.MovesDataManager;
@@ -52,10 +54,12 @@ public class AuthResource {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response processCallback(@QueryParam("code") String code) throws ClientProtocolException, IOException {
+	public SummaryResponse processCallback(@QueryParam("code") String code) 
+			throws ClientProtocolException, IOException {
+		
 		if (code == null)
 		{
-			return Response.status(400).build();
+			return new SummaryResponse(400, "No 'code' param specified", SummaryType.ERROR);
 		}
 		
 		HttpClient client = HttpClientBuilder.create().build();
@@ -103,16 +107,15 @@ public class AuthResource {
 			// on submit of Moves PIN, display 2 week co2e
 		// if userId has moves access_token, display latest 2 week co2e
 		
-		String entity = processUsername(auth0UserInfo, tokenResponse);
-		
-		return Response.status(200).entity(entity).build();
+		SummaryResponse summaryResponse = processUsername(auth0UserInfo, tokenResponse);
+		return summaryResponse;
 	}
 	
 	/*
 	 * TODO: spit this into manageable methods
 	 * 
 	 */
-	private String processUsername(String auth0UserInfo, TokenResponse tokenResponse) 
+	private SummaryResponse processUsername(String auth0UserInfo, TokenResponse tokenResponse) 
 			throws JsonParseException, JsonMappingException, IOException {
 		
 		// get the user_id from userInfo returned from auth0
@@ -130,7 +133,8 @@ public class AuthResource {
 			_userManager.saveUser(newUser);
 			
 			// user saved, send back status to tell frontend
-			return "Saved new user " + newUser.getUserId();
+			return new SummaryResponse(200, 
+					"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
 		} else {
 			
 			// check if user authenticated with Moves
@@ -139,25 +143,24 @@ public class AuthResource {
 			
 			String movesAccessToken = "";
 			if (movesUser == null) {
-				// send back status
-				// to tell frontend to ask user to enter 5-digit PIN into moves
-				// a movesUser will then get created as a result of this
-				return "Please enter 5 digit Moves PIN into app and press submit";
+				return new SummaryResponse(200, 
+						"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
 			} else {
 				movesAccessToken = movesUser.getAccessToken();
 				if (movesAccessToken == null) {
 					// user exists but has not connected to moves, send back status
-					// to tell frontend to prompt for 5-digi Moves PIN
-					return "Please enter 5 digit Moves PIN";
+					// to tell frontend to prompt for 5-digit Moves PIN
+					return new SummaryResponse(200, 
+							"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
 				}
 			}
 			
 			// Moves accessToken exists, display latest value
 			List<MovesData> movesDataList = _movesDataManager.getAll();
-			return String.valueOf(movesDataList.get(0).getCo2E());
+
+			return new SummaryResponse(200, 
+					String.valueOf(movesDataList.get(0).getCo2E()), SummaryType.INFO);
 		}
-			
-		
 	}
 	
 	private String responseToString(HttpResponse response) 
