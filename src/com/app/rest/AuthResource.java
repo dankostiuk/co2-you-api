@@ -12,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -23,14 +22,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.eclipse.persistence.sdo.types.SDOWrapperType.StringsWrapperImpl;
-import org.jsoup.helper.StringUtil;
 
 import com.app.Constants;
 import com.app.entity.SummaryResponse;
+import com.app.entity.SummaryResponse.SummaryType;
 import com.app.entity.TokenResponse;
 import com.app.entity.User;
-import com.app.entity.SummaryResponse.SummaryType;
 import com.app.entity.moves.MovesData;
 import com.app.entity.moves.MovesUser;
 import com.app.manager.MovesDataManager;
