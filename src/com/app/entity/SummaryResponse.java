@@ -8,6 +8,8 @@ package com.app.entity;
 public class SummaryResponse {
 	public String message;
 	
+	public String name;
+	
 	public int statusCode;
 	
 	public int summaryType;
@@ -28,8 +30,9 @@ public class SummaryResponse {
         }
 	};
 	
-	public SummaryResponse(int statusCode, String message, SummaryType summaryType) {
+	public SummaryResponse(int statusCode, String name, String message, SummaryType summaryType) {
 		this.statusCode = statusCode;
+		this.name = name;
 		this.message = message;
 		this.summaryType = summaryType.getSummaryTypeCode();
 	}
@@ -60,6 +63,20 @@ public class SummaryResponse {
 	 */
 	public void setStatusCode(int statusCode) {
 		this.statusCode = statusCode;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

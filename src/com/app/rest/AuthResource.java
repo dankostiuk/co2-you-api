@@ -23,6 +23,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.eclipse.persistence.sdo.types.SDOWrapperType.StringsWrapperImpl;
+import org.jsoup.helper.StringUtil;
 
 import com.app.Constants;
 import com.app.entity.SummaryResponse;
@@ -59,7 +61,7 @@ public class AuthResource {
 		
 		if (code == null)
 		{
-			return new SummaryResponse(400, "No 'code' param specified", SummaryType.ERROR);
+			return new SummaryResponse(400, null, "No 'code' param specified", SummaryType.ERROR);
 		}
 		
 		HttpClient client = HttpClientBuilder.create().build();
@@ -122,6 +124,8 @@ public class AuthResource {
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode array = objectMapper.readValue(auth0UserInfo, JsonNode.class);
 		String userId = array.get("user_id").textValue();
+		String name = array.get("given_name") == null ? 
+				array.get("name").textValue() : array.get("given_name").textValue();
 		
 		// save if user doesn't exist in db, otherwise continue
 		User user = _userManager.findUser(userId);
@@ -129,11 +133,11 @@ public class AuthResource {
 			User newUser = new User();
 			newUser.setUserId(userId);
 			newUser.setOauthAccessToken(tokenResponse.getAccessToken());
-			newUser.setOauthRefreshToken(tokenResponse.getRefreshToken());
+			newUser.setName(name);
 			_userManager.saveUser(newUser);
 			
 			// user saved, send back status to tell frontend
-			return new SummaryResponse(200, 
+			return new SummaryResponse(200, name,
 					"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
 		} else {
 			
@@ -143,14 +147,14 @@ public class AuthResource {
 			
 			String movesAccessToken = "";
 			if (movesUser == null) {
-				return new SummaryResponse(200, 
+				return new SummaryResponse(200, name,
 						"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
 			} else {
 				movesAccessToken = movesUser.getAccessToken();
 				if (movesAccessToken == null) {
 					// user exists but has not connected to moves, send back status
 					// to tell frontend to prompt for 5-digit Moves PIN
-					return new SummaryResponse(200, 
+					return new SummaryResponse(200, name,
 							"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
 				}
 			}
@@ -158,7 +162,7 @@ public class AuthResource {
 			// Moves accessToken exists, display latest value
 			List<MovesData> movesDataList = _movesDataManager.getAll();
 
-			return new SummaryResponse(200, 
+			return new SummaryResponse(200, name,
 					String.valueOf(movesDataList.get(0).getCo2E()), SummaryType.INFO);
 		}
 	}

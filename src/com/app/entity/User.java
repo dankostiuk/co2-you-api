@@ -26,6 +26,9 @@ public class User implements Serializable {
 	@Column(name="user_id")
 	private String userId;
 	
+	@Column(name="name")
+	private String name;
+	
 	@Column(name="oauth_access_token")
 	private String oauthAccessToken;
 	
@@ -36,10 +39,11 @@ public class User implements Serializable {
 		
 	}
 	
-	public User(Long id, String userId, String oathAccessToken, String oathRefreshToken) {
+	public User(Long id, String userId, String name, String oathAccessToken, String oathRefreshToken) {
 		super();
 		this.id = id;
 		this.userId = userId;
+		this.name = name;
 		this.oauthAccessToken = oathAccessToken;
 		this.oauthRefreshToken = oathRefreshToken;
 	}
@@ -70,6 +74,20 @@ public class User implements Serializable {
 	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
