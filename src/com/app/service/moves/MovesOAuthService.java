@@ -117,7 +117,7 @@ public class MovesOAuthService {
 		return tokenResponse.getAccessToken();
 	}
 	
-	private Map<String, String> getTokenMap() throws ClientProtocolException, IOException {
+	public Map<String, String> getTokenMap() throws ClientProtocolException, IOException {
 		String uri = "https://api.moves-app.com/oauth/v1/authorize?response_type=code&client_id=" 
 				+ Constants.MOVES_CLIENT_ID + "&scope=activity";
 

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,6 +34,7 @@ import com.app.entity.moves.MovesUser;
 import com.app.manager.MovesDataManager;
 import com.app.manager.MovesUserManager;
 import com.app.manager.UserManager;
+import com.app.service.moves.MovesOAuthService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -117,6 +119,9 @@ public class AuthResource {
 	private SummaryResponse processUsername(String auth0UserInfo, TokenResponse tokenResponse) 
 			throws JsonParseException, JsonMappingException, IOException {
 		
+		MovesOAuthService movesAuthService = new MovesOAuthService();
+		Map<String, String> tokenMap = movesAuthService.getTokenMap();
+		
 		// get the user_id from userInfo returned from auth0
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode array = objectMapper.readValue(auth0UserInfo, JsonNode.class);
@@ -135,7 +140,8 @@ public class AuthResource {
 			
 			// user saved, send back status to tell frontend
 			return new SummaryResponse(200, name,
-					"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
+					"Please enter 5 digit Moves PIN '" + 
+							tokenMap.get("code") + "' into app and press Submit.", SummaryType.REGISTER);
 		} else {
 			
 			// check if user authenticated with Moves
@@ -145,14 +151,16 @@ public class AuthResource {
 			String movesAccessToken = "";
 			if (movesUser == null) {
 				return new SummaryResponse(200, name,
-						"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
+						"Please enter 5 digit Moves PIN '" + 
+								tokenMap.get("code") + "' into app and press Submit.", SummaryType.REGISTER);
 			} else {
 				movesAccessToken = movesUser.getAccessToken();
 				if (movesAccessToken == null) {
 					// user exists but has not connected to moves, send back status
 					// to tell frontend to prompt for 5-digit Moves PIN
 					return new SummaryResponse(200, name,
-							"Please enter 5 digit Moves PIN into app and press Submit.", SummaryType.REGISTER);
+							"Please enter 5 digit Moves PIN '" + 
+									tokenMap.get("code") + "' into app and press Submit.", SummaryType.REGISTER);
 				}
 			}
 			
