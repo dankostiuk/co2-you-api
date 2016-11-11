@@ -140,8 +140,8 @@ public class AuthResource {
 			
 			// user saved, send back status to tell frontend
 			return new SummaryResponse(200, name,
-					"Please enter 5 digit Moves PIN '" + 
-							tokenMap.get("code") + "' into app and press Submit.", SummaryType.REGISTER);
+					"Please enter 8 digit PIN '" + 
+							tokenMap.get("code") + "' into Moves app and press Submit.", SummaryType.REGISTER);
 		} else {
 			
 			// check if user authenticated with Moves
@@ -151,16 +151,16 @@ public class AuthResource {
 			String movesAccessToken = "";
 			if (movesUser == null) {
 				return new SummaryResponse(200, name,
-						"Please enter 5 digit Moves PIN '" + 
-								tokenMap.get("code") + "' into app and press Submit.", SummaryType.REGISTER);
+						"Please enter 8 digit PIN '" + 
+								tokenMap.get("code") + "' into Moves app and press Submit.", SummaryType.REGISTER);
 			} else {
 				movesAccessToken = movesUser.getAccessToken();
 				if (movesAccessToken == null) {
 					// user exists but has not connected to moves, send back status
 					// to tell frontend to prompt for 5-digit Moves PIN
 					return new SummaryResponse(200, name,
-							"Please enter 5 digit Moves PIN '" + 
-									tokenMap.get("code") + "' into app and press Submit.", SummaryType.REGISTER);
+							"Please enter 8 digit PIN '" + 
+									tokenMap.get("code") + "' into Moves app and press Submit.", SummaryType.REGISTER);
 				}
 			}
 			
