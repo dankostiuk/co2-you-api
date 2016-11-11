@@ -132,7 +132,7 @@ public abstract class AbstractManager<T> {
 	 */
 	private void startTransaction()
 	{
-		if (_emf == null) {
+		if (_emf == null || !_emf.isOpen()) {
 			_emf = Persistence.createEntityManagerFactory("Hibernate");	
 		}
 		
