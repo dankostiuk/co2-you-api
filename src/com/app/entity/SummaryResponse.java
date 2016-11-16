@@ -10,6 +10,8 @@ public class SummaryResponse {
 	
 	public String name;
 	
+	public String userId;
+	
 	public int statusCode;
 	
 	public int summaryType;
@@ -30,9 +32,10 @@ public class SummaryResponse {
         }
 	};
 	
-	public SummaryResponse(int statusCode, String name, String message, SummaryType summaryType) {
+	public SummaryResponse(int statusCode, String name, String userId, String message, SummaryType summaryType) {
 		this.statusCode = statusCode;
 		this.name = name;
+		this.userId = userId;
 		this.message = message;
 		this.summaryType = summaryType.getSummaryTypeCode();
 	}
@@ -77,6 +80,20 @@ public class SummaryResponse {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	/**
+	 * @return the userId
+	 */
+	public String getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	/**

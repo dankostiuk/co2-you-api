@@ -3,6 +3,10 @@ package com.quartz;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -13,6 +17,8 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
+
+import com.app.Constants;
 
 /**
  * Sets up FetchDataJob and configures quartz fire time.
@@ -40,27 +46,29 @@ public class QuartzListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent servletContext) {
 		System.out.println("Context Initialized");
 		
-		 try {
-             // Setup the Job class and the Job group
-             JobDetail job = newJob(FetchDataJob.class).withIdentity(
-                             "CronQuartzJob", "Group").build();
-            
-             // every 5 hours
-             Trigger trigger = newTrigger()
+		ServletContext context = servletContext.getServletContext();
+        context.setAttribute(Constants.CACHE_KEY, 
+        		new ConcurrentHashMap<String, Map<String, String>>());
+		
+		try {
+			// Setup the Job class and the Job group
+			JobDetail job = newJob(FetchDataJob.class).withIdentity(
+			                 "CronQuartzJob", "Group").build();
+			
+			// every 5 hours
+			Trigger trigger = newTrigger()
 				.withIdentity("TriggerName", "Group")
 				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInHours(5)
 						.repeatForever())
 				.build();
- 				
-             // Setup the Job and Trigger with Scheduler & schedule jobs
-             _scheduler = new StdSchedulerFactory().getScheduler();
-             _scheduler.start();
-             _scheduler.scheduleJob(job, trigger);
-	     }
-	     catch (SchedulerException e) {
-	             e.printStackTrace();
-	     }
-		
+				
+			// Setup the Job and Trigger with Scheduler & schedule jobs
+			_scheduler = new StdSchedulerFactory().getScheduler();
+			_scheduler.start();
+			_scheduler.scheduleJob(job, trigger);
+			
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
 	}
-
 }

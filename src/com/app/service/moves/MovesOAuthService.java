@@ -106,8 +106,6 @@ public class MovesOAuthService {
 					    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 					    .create();
 				tokenResponse = gson.fromJson(response, TokenResponse.class);
-				
-				saveTokenResponseToFile(tokenResponse);
 			}
 			
 		} catch (IOException e) {
@@ -163,7 +161,7 @@ public class MovesOAuthService {
 		return tokenMap;
 	}
 	
-	private boolean postCheckAuthorized(Map<String, String> tokenMap) throws ClientProtocolException, IOException {
+	public boolean postCheckAuthorized(Map<String, String> tokenMap) throws ClientProtocolException, IOException {
 		String uri = "https://api.moves-app.com/oauth/v1/checkAuthorized";
 		
 		String authToken = tokenMap.get("authToken");
@@ -198,7 +196,7 @@ public class MovesOAuthService {
 		return false;
 	}
 	
-	private String authorizeAndRedirect(Map<String, String> tokenMap) throws UnsupportedOperationException, IOException {
+	public String authorizeAndRedirect(Map<String, String> tokenMap) throws UnsupportedOperationException, IOException {
 		
 		String uri = "https://api.moves-app.com/oauth/v1/authorizeAndRedirect";
 		
@@ -238,7 +236,7 @@ public class MovesOAuthService {
 		
 	}
 	
-	private String getAccessToken(String authCode, Map<String, String> tokenMap) throws ClientProtocolException, IOException {
+	public String getAccessToken(String authCode, Map<String, String> tokenMap) throws ClientProtocolException, IOException {
 		
 		String uri = "https://api.moves-app.com/oauth/v1/access_token";
 		
@@ -308,69 +306,5 @@ public class MovesOAuthService {
 		TokenResponse tokenResponse = gson.fromJson(result.toString(), TokenResponse.class);
 		
 		return tokenResponse;
-	}
-	
-	private static String loadRefreshTokenFromFile() {
-		Properties prop = new Properties();
-		InputStream input = null;
-
-		String refreshToken;
-		try {
-
-			input = new FileInputStream("creds");
-
-			// load a properties file
-			prop.load(input);
-
-			// get the property value and print it out
-			refreshToken = prop.getProperty("refresh_token");
-			System.out.println("Using refresh token: " + refreshToken);
-			
-			return refreshToken;
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
-	}
-	
-	private void saveTokenResponseToFile(TokenResponse tokenResponse) {
-		// save to creds file
-		Properties prop = new Properties();
-		OutputStream output = null;
-
-		try {
-
-			output = new FileOutputStream("creds");
-
-			// set the properties value
-			prop.setProperty("access_token", tokenResponse.getAccessToken());
-			prop.setProperty("token_type", tokenResponse.getTokenType());
-			prop.setProperty("expires_in", tokenResponse.getExpiresIn());
-			prop.setProperty("refresh_token", tokenResponse.getRefreshToken());
-			prop.setProperty("user_id", tokenResponse.getUserId());
-
-			// save properties to project root folder
-			prop.store(output, null);
-
-		} catch (IOException io) {
-			io.printStackTrace();
-		} finally {
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-		}
 	}
 }

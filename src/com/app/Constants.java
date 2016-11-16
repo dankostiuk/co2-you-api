@@ -7,6 +7,9 @@ package com.app;
  */
 public class Constants {
 	
+	// ServletContext cache key
+	public static final String CACHE_KEY = "cache";
+	
 	// -- Auth0 API KEys
 	public static final String AUTH0_CLIENT_ID = "TJSO4rVtfO9NehWy3YrmSWXNQEXIqZQK";
 	public static final String AUTH0_CLIENT_SECRET = "I8QfjwV9k1kh4HXUkbu3nmmSgERIYGpU16mMDczbe3emThOMhFzrDGdHtSI1h7CG";

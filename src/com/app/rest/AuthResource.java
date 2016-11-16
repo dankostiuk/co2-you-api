@@ -7,11 +7,15 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpResponse;
@@ -50,6 +54,16 @@ public class AuthResource {
 	MovesUserManager _movesUserManager = new MovesUserManager(_userManager.getEntityManagerFactory());
 	MovesDataManager _movesDataManager = new MovesDataManager(_userManager.getEntityManagerFactory());
 	
+	@Context
+    private ServletContext _context;
+	private ConcurrentMap<String, Map<String, String>> _contextCache;
+	
+	@PostConstruct
+	@SuppressWarnings("unchecked")
+    public void init() {
+		_contextCache = (ConcurrentMap) _context.getAttribute(Constants.CACHE_KEY);
+    }
+	
 	/**
 	 * Process Auth0 callback
 	 */
@@ -60,7 +74,7 @@ public class AuthResource {
 		
 		if (code == null)
 		{
-			return new SummaryResponse(400, null, "No 'code' param specified", SummaryType.ERROR);
+			return new SummaryResponse(400, null, null, "No 'code' param specified", SummaryType.ERROR);
 		}
 		
 		HttpClient client = HttpClientBuilder.create().build();
@@ -102,25 +116,14 @@ public class AuthResource {
 		
 		String auth0UserInfo = responseToString(getResponse);
 		
-		//TODO: analyze all 3 social logins + manual login and figure out
-		// what kind of userId to persist to user table.
-		// next, check if userId already has a moves access_token, if not, prompt for Moves PIN
-			// on submit of Moves PIN, display 2 week co2e
-		// if userId has moves access_token, display latest 2 week co2e
-		
-		SummaryResponse summaryResponse = processUsername(auth0UserInfo, tokenResponse);
+		SummaryResponse summaryResponse = processUsername(auth0UserInfo, accessToken);
 		return summaryResponse;
 	}
 	
-	/*
-	 * TODO: spit this into manageable methods
-	 * 
-	 */
-	private SummaryResponse processUsername(String auth0UserInfo, TokenResponse tokenResponse) 
+	/* Takes in user_id and starts Moves auth process if not already authenticated.
+	 Otherwise, if already authenticated, return latest co2e. */
+	private SummaryResponse processUsername(String auth0UserInfo, String acessToken) 
 			throws JsonParseException, JsonMappingException, IOException {
-		
-		MovesOAuthService movesAuthService = new MovesOAuthService();
-		Map<String, String> tokenMap = movesAuthService.getTokenMap();
 		
 		// get the user_id from userInfo returned from auth0
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -131,45 +134,41 @@ public class AuthResource {
 		
 		// save if user doesn't exist in db, otherwise continue
 		User user = _userManager.findUser(userId);
-		if (user == null) {
-			User newUser = new User();
-			newUser.setUserId(userId);
-			newUser.setOauthAccessToken(tokenResponse.getAccessToken());
-			newUser.setName(name);
-			_userManager.saveUser(newUser);
-			
-			// user saved, send back status to tell frontend
-			return new SummaryResponse(200, name,
-					"Please enter 8 digit PIN '" + 
-							tokenMap.get("code") + "' into Moves app and press Submit.", SummaryType.REGISTER);
-		} else {
+		if (user != null) {
 			
 			// check if user authenticated with Moves
-			
 			MovesUser movesUser = _movesUserManager.findMovesUserByUserId(userId);
 			
 			String movesAccessToken = "";
-			if (movesUser == null) {
-				return new SummaryResponse(200, name,
-						"Please enter 8 digit PIN '" + 
-								tokenMap.get("code") + "' into Moves app and press Submit.", SummaryType.REGISTER);
-			} else {
+			if (movesUser != null) {
 				movesAccessToken = movesUser.getAccessToken();
-				if (movesAccessToken == null) {
-					// user exists but has not connected to moves, send back status
-					// to tell frontend to prompt for 5-digit Moves PIN
-					return new SummaryResponse(200, name,
-							"Please enter 8 digit PIN '" + 
-									tokenMap.get("code") + "' into Moves app and press Submit.", SummaryType.REGISTER);
+				
+				// user exist and has authenticated with moves before, send back latest co2e
+				if (movesAccessToken != null) {
+					// Moves accessToken exists, display latest value
+					List<MovesData> movesDataList = _movesDataManager.getAll();
+
+					return new SummaryResponse(200, name, null,
+							String.valueOf(movesDataList.get(0).getCo2E()), SummaryType.INFO);
 				}
 			}
-			
-			// Moves accessToken exists, display latest value
-			List<MovesData> movesDataList = _movesDataManager.getAll();
-
-			return new SummaryResponse(200, name,
-					String.valueOf(movesDataList.get(0).getCo2E()), SummaryType.INFO);
+		} else {
+			// user doesn't currently exist, save it
+			User newUser = new User();
+			newUser.setUserId(userId);
+			newUser.setOauthAccessToken(acessToken);
+			newUser.setName(name);
+			_userManager.saveUser(newUser);
 		}
+
+		MovesOAuthService movesAuthService = new MovesOAuthService();
+		Map<String, String> tokenMap = movesAuthService.getTokenMap();
+		// add moves tokenMap to cache to be used for PIN auth
+		_contextCache.put(userId + "movesTokenMap", tokenMap);
+		
+		return new SummaryResponse(200, name, userId,
+					"Please enter 8 digit PIN '" + 
+							tokenMap.get("code") + "' into Moves app and press Submit.", SummaryType.REGISTER);	
 	}
 	
 	private String responseToString(HttpResponse response) 
