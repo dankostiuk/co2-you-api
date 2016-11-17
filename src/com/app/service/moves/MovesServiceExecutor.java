@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
-import org.joda.time.DateTime;
 
 import com.app.entity.TokenResponse;
 import com.app.entity.moves.MovesData;
@@ -46,6 +45,10 @@ public class MovesServiceExecutor implements IServiceExecutor {
 		for (MovesUser movesUser : movesUsers) {
 			String accessToken = movesUser.getAccessToken();
 			
+			if (accessToken == null) {
+				continue;
+			}
+			
 			try {
 				if (!_authService.validateAccessToken(accessToken)) {
 					// try refreshing first
@@ -55,11 +58,6 @@ public class MovesServiceExecutor implements IServiceExecutor {
 					movesUser.setAccessToken(accessToken);
 					movesUser.setRefreshToken(tokenResponse.getRefreshToken());
 					_movesUserManager.saveMovesUser(movesUser);
-//						
-//						// if still cannot validate token, authorize
-//						if (!_authService.validateAccessToken(FileReaderWriter.loadAccessTokenFromFile())) {
-//							_authService.authorizeAndReturnAccessToken();
-//						}
 				}
 				
 				double co2e = _apiService.getLastTwoWeeksCarbon(accessToken);
@@ -70,10 +68,6 @@ public class MovesServiceExecutor implements IServiceExecutor {
 				
 				_movesDataManager.saveMovesData(movesData);
 			} catch (Exception e) {
-				// if an error occured, authorize from scratch
-				//_authService.authorizeAndReturnAccessToken();		
-				
-				//TODO: properly handle this, we don't want to be authorizing by asking for pin here
 				System.out.println("Got exception: " + e.getMessage());
 			}
 		}

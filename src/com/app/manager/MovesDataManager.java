@@ -4,10 +4,8 @@ import java.util.List;
 
 import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityNotFoundException;
 
 import com.app.entity.moves.MovesData;
-import com.app.entity.moves.MovesUser;
 
 /**
  * Carries out MovesData ORM operations.
@@ -35,6 +33,24 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 		
 		return movesData;
 	}
+	
+	/**
+	 * Gets the latest MovesData for the specified userId
+	 * @param userId The user id to obtain the co2e value for.
+	 * @return The latest MovesData entry.
+	 */
+	public MovesData findLatestMovesDataUserId(String userId) {
+		
+		String query = 
+			"select * from MovesData "
+				+ "where user_id='" + userId + "' "
+				+ "and "
+				+ "timestamp = (SELECT MAX(timestamp) FROM MovesData "
+				+ "		where user_id='" + userId + "');";
+		
+		List<MovesData> movesDataList = runNativeQuery(query);
+		return movesDataList.get(0);
+	}
 
 	/**
 	 * Gets all movesData.
@@ -46,20 +62,10 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	}
 	
 	/**
-	 * Saves the movesData. If the movesData has no id, create the movesData.
-	 * Otherwise, update fields from incoming object and persist.
+	 * Saves the movesData. Note that we cannot modify existing entries.
 	 * @param movesData The movesData to save.
 	 */
 	public void saveMovesData(MovesData movesData) {
-		
-		if (movesData.getId() == null || movesData.getId() == -1) {
-			writeTransaction(movesData);
-		} else {
-			MovesData currentMovesData = readTransaction(movesData.getId());
-			
-			//TODO: can we even update movesData entries?
-			
-			writeTransaction(currentMovesData);
-		}
+		writeTransaction(movesData);
 	}
 }

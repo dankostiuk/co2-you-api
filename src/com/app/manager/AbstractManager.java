@@ -116,6 +116,44 @@ public abstract class AbstractManager<T> {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<T> findManyTransaction(String key, String value) throws EntityNotFoundException {
+		startTransaction();
+		try {
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				List<T> resultList = _em.createQuery("SELECT t FROM " + _clazz.getSimpleName() + " t where t." + key + " = '" + value + "'")
+						 .getResultList();
+				t.commit();
+				
+				return resultList;
+			} finally {
+				if (t.isActive()) t.rollback();
+			}
+		} finally {
+			closeTransaction();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<T> runNativeQuery(String nativeQuery) {
+		startTransaction();
+		try {
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				List<T> resultList = _em.createNativeQuery(nativeQuery, _clazz).getResultList();
+				t.commit();
+				return resultList;
+			} finally {
+				if (t.isActive()) t.rollback();
+			}
+		} finally {
+			closeTransaction();
+		}
+	}
+	
 	/**
 	 * Connect to Heroku db
 	 * @return

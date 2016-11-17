@@ -55,9 +55,6 @@ public class MovesApiService {
 			result.append(line);
 		}
 		
-		System.out.println("\n\nRaw response:");
-		System.out.println(result.toString() + "\n\n");
-		
 		Gson gson = new GsonBuilder()
 			    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 			    .create();
@@ -75,15 +72,10 @@ public class MovesApiService {
 		double transportDistance = 0;
 		
 		for (MovesDay movesDay : movesDays) {
-			System.out.println(movesDay.getDate() + " : ");
 			List<MovesSummary> movesSummaries = movesDay.getSummary();
 			
 			if (movesSummaries != null && !movesSummaries.isEmpty()) {
 				for (MovesSummary movesSummary : movesSummaries) {
-					System.out.println("\t" + movesSummary.getActivity() + ":"); 
-					System.out.println("\t\tSteps: " + movesSummary.getSteps());
-					System.out.println("\t\tDuration: " + movesSummary.getDuration());
-					System.out.println("\t\tDistance: " + movesSummary.getDistance());
 					
 					// activity is walking or running
 					if (movesSummary.getSteps() != 0) {

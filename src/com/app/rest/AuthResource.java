@@ -50,9 +50,9 @@ import com.google.gson.GsonBuilder;
 @Path("/auth")
 public class AuthResource {
 	
-	UserManager _userManager = new UserManager();
-	MovesUserManager _movesUserManager = new MovesUserManager(_userManager.getEntityManagerFactory());
-	MovesDataManager _movesDataManager = new MovesDataManager(_userManager.getEntityManagerFactory());
+	private UserManager _userManager = new UserManager();
+	private MovesUserManager _movesUserManager = new MovesUserManager();
+	private MovesDataManager _movesDataManager = new MovesDataManager();
 	
 	@Context
     private ServletContext _context;
@@ -77,7 +77,6 @@ public class AuthResource {
 			return new SummaryResponse(400, null, null, "No 'code' param specified", SummaryType.ERROR);
 		}
 		
-		HttpClient client = HttpClientBuilder.create().build();
 		String uri = "https://app58285542.auth0.com/oauth/token";
 		HttpPost post = new HttpPost(uri);
 		
@@ -94,9 +93,11 @@ public class AuthResource {
 		try {
 			post.setEntity(new UrlEncodedFormEntity(urlParameters));
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return new SummaryResponse(400, null, null, 
+					"Could not authorize using Auth0.", SummaryType.ERROR);
 		}
+		
+		HttpClient client = HttpClientBuilder.create().build();
 		HttpResponse response = client.execute(post);
 		
 		String result = responseToString(response);
@@ -120,8 +121,14 @@ public class AuthResource {
 		return summaryResponse;
 	}
 	
-	/* Takes in user_id and starts Moves auth process if not already authenticated.
-	 Otherwise, if already authenticated, return latest co2e. */
+	/**
+	 * Takes in user_id and starts Moves auth process if not already authenticated.
+	 * Otherwise, if already authenticated, return latest co2e.
+	 * @param auth0UserInfo The Auth0 userInfo json
+	 * @param acessToken The Auth0 access token
+	 * @return SummaryResponse the SummaryResponse to hand to the frontend
+	 * @throws Exception If an error occurs.
+	 */
 	private SummaryResponse processUsername(String auth0UserInfo, String acessToken) 
 			throws JsonParseException, JsonMappingException, IOException {
 		
@@ -146,11 +153,11 @@ public class AuthResource {
 				// user exist and has authenticated with moves before, send back latest co2e
 				if (movesAccessToken != null) {
 					// Moves accessToken exists, display latest value
-					List<MovesData> movesDataList = _movesDataManager.getAll();
+					MovesData movesData = _movesDataManager.findLatestMovesDataUserId(userId);
 
 					return new SummaryResponse(200, name, null,
-							String.valueOf(movesDataList.get(0).getCo2E()), SummaryType.INFO);
-				}
+							"Your latest co2e value: " + movesData.getCo2E(), SummaryType.INFO);
+				} 
 			}
 		} else {
 			// user doesn't currently exist, save it

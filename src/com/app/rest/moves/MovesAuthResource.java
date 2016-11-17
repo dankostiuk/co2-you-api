@@ -1,5 +1,6 @@
 package com.app.rest.moves;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -12,12 +13,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.http.client.ClientProtocolException;
+
 import com.app.Constants;
 import com.app.entity.SummaryResponse;
 import com.app.entity.TokenResponse;
+import com.app.entity.moves.MovesData;
 import com.app.entity.moves.MovesUser;
+import com.app.manager.MovesDataManager;
 import com.app.manager.MovesUserManager;
 import com.app.entity.SummaryResponse.SummaryType;
+import com.app.service.moves.MovesApiService;
 import com.app.service.moves.MovesOAuthService;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -41,7 +47,7 @@ public class MovesAuthResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public SummaryResponse authenticateMoves(@QueryParam("user_id") String userId) {
+	public SummaryResponse authenticateMoves(@QueryParam("user_id") String userId) throws ClientProtocolException, IOException {
 		Map<String, String> movesTokenMap = _contextCache.get(userId + "movesTokenMap");
 		 
 		if (movesTokenMap == null) {
@@ -80,7 +86,18 @@ public class MovesAuthResource {
 		movesUser.setUserId(userId);
 		movesUserManager.saveMovesUser(movesUser);
 		
+		MovesApiService apiService = new MovesApiService();
+		double co2e = apiService.getLastTwoWeeksCarbon(tokenResponse.getAccessToken());
+		
+		MovesData movesData = new MovesData();
+		movesData.setCo2E(co2e);
+		movesData.setUserId(movesUser.getUserId());
+		
+		MovesDataManager movesDataManager = new MovesDataManager();
+		movesDataManager.saveMovesData(movesData);
+		
 		return new SummaryResponse(200, null, null, 
-				"You have now linked your Moves account, check back soon!", SummaryType.REGISTER);
+				"You have now linked your Moves account! Your current co2e is " + co2e, 
+					SummaryType.INFO);
 	}
 }
