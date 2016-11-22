@@ -12,11 +12,11 @@ public class Constants {
 	
 	// -- Auth0 API KEys
 	public static final String AUTH0_CLIENT_ID = "TJSO4rVtfO9NehWy3YrmSWXNQEXIqZQK";
-	public static final String AUTH0_CLIENT_SECRET = "I8QfjwV9k1kh4HXUkbu3nmmSgERIYGpU16mMDczbe3emThOMhFzrDGdHtSI1h7CG";
+	public static final String AUTH0_CLIENT_SECRET = System.getenv("AUTH0_CLIENT_SECRET");
 	
 	// -- Moves API Keys
 	public static final String MOVES_CLIENT_ID = "d86A71Kz2I5PUC0anuoq67qquUn9Ul4z";
-	public static final String MOVES_CLIENT_SECRET = "Rq7ckF2Z7bTdz1aQ8BQpFCG94z3TjG02C5qL6ExPLU4AKb6kfMlAh1ek0VkPRnJI";
+	public static final String MOVES_CLIENT_SECRET = System.getenv("MOVES_CLIENT_SECRET");
 	
 	
 	// -- Moves API CO2e coefficients

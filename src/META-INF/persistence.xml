@@ -11,7 +11,7 @@
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://vhw3t8e71xdz9k14.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/vrzkqyhvd5eju63v" />
             <property name="javax.persistence.jdbc.user" value="mo88uz8m17a0jexm" />
-            <property name="javax.persistence.jdbc.password" value="omc1bu22eibjkpyo" />
+            <property name="javax.persistence.jdbc.password" value="PASSWORD" />
            	
            		<!-- Configure Connection Pool -->
            	<!-- TODO: implement connection pool later

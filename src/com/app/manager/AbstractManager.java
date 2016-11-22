@@ -4,7 +4,9 @@ import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -171,7 +173,17 @@ public abstract class AbstractManager<T> {
 	private void startTransaction()
 	{
 		if (_emf == null || !_emf.isOpen()) {
-			_emf = Persistence.createEntityManagerFactory("Hibernate");	
+			
+			// override sensitive values in persistence config with env vars 
+			Map<String, String> env = System.getenv();
+			Map<String, Object> configOverrides = new HashMap<String, Object>();
+			for (String envName : env.keySet()) {
+			    if (envName.contains("JAWSDB_PASSWORD")) {
+			        configOverrides.put("javax.persistence.jdbc.password", env.get(envName));    
+			    }
+			}
+			
+			_emf = Persistence.createEntityManagerFactory("Hibernate", configOverrides);	
 		}
 		
 		_em = _emf.createEntityManager();
