@@ -87,7 +87,7 @@ public class MovesAuthResource {
 		movesUserManager.saveMovesUser(movesUser);
 		
 		MovesApiService apiService = new MovesApiService();
-		double co2e = apiService.getLastTwoWeeksCarbon(tokenResponse.getAccessToken());
+		double co2e = apiService.getDailyCarbon(tokenResponse.getAccessToken());
 		
 		MovesData movesData = new MovesData();
 		movesData.setCo2E(co2e);

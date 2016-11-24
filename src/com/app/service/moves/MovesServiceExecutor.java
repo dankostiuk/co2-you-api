@@ -60,7 +60,7 @@ public class MovesServiceExecutor implements IServiceExecutor {
 					_movesUserManager.saveMovesUser(movesUser);
 				}
 				
-				double co2e = _apiService.getLastTwoWeeksCarbon(accessToken);
+				double co2e = _apiService.getDailyCarbon(accessToken);
 				
 				MovesData movesData = new MovesData();
 				movesData.setCo2E(co2e);

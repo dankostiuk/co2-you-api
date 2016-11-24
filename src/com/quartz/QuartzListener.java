@@ -10,10 +10,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.quartz.DailyTimeIntervalScheduleBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
+import org.quartz.TimeOfDay;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -54,11 +56,10 @@ public class QuartzListener implements ServletContextListener {
 			JobDetail job = newJob(FetchDataJob.class).withIdentity(
 			                 "CronQuartzJob", "Group").build();
 			
-			// every 5 hours
-			Trigger trigger = newTrigger()
-				.withIdentity("TriggerName", "Group")
-				.withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInHours(5)
-						.repeatForever())
+			// every 24 hours starting midnight
+			Trigger trigger = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
+		        .onEveryDay()
+		        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(23, 59)).withIntervalInHours(24)
 				.build();
 				
 			// Setup the Job and Trigger with Scheduler & schedule jobs

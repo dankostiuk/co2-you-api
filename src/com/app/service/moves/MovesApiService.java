@@ -27,16 +27,16 @@ import com.google.gson.reflect.TypeToken;
  */
 public class MovesApiService {
 
-	public double getLastTwoWeeksCarbon(String accessToken) 
+	public double getDailyCarbon(String accessToken) 
 			throws ClientProtocolException, IOException {
-		List<MovesDay> movesDays = getLastTwoWeeksDailySummary(accessToken);
+		List<MovesDay> movesDays = getDailySummary(accessToken);
 		
 		return processDailyActivities(movesDays);
 	}
 	
-	private List<MovesDay> getLastTwoWeeksDailySummary(String accessToken) throws ClientProtocolException, IOException {
+	private List<MovesDay> getDailySummary(String accessToken) throws ClientProtocolException, IOException {
 		
-		String uri = "https://api.moves-app.com/api/1.1/user/summary/daily?pastDays=14";
+		String uri = "https://api.moves-app.com/api/1.1/user/summary/daily?pastDays=1";
 		
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpGet get = new HttpGet(uri);
