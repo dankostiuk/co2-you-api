@@ -17,6 +17,7 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.TimeOfDay;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
 import com.app.Constants;
@@ -57,9 +58,10 @@ public class QuartzListener implements ServletContextListener {
 			                 "CronQuartzJob", "Group").build();
 			
 			// every 24 hours starting midnight
-			Trigger trigger = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
-		        .onEveryDay()
-		        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(23, 59)).withIntervalInHours(24)
+			Trigger trigger = TriggerBuilder.newTrigger().withSchedule(DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule()
+			        .onEveryDay()
+			        .startingDailyAt(TimeOfDay.hourAndMinuteOfDay(23, 59)).withIntervalInHours(24))
+					.withIdentity("TriggerName", "Group")
 				.build();
 				
 			// Setup the Job and Trigger with Scheduler & schedule jobs
