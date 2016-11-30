@@ -1,5 +1,9 @@
 package com.app.entity;
 
+import java.util.List;
+
+import com.app.entity.moves.MovesData;
+
 /**
  * Summary response object.
  * 
@@ -7,6 +11,8 @@ package com.app.entity;
  */
 public class SummaryResponse {
 	public String message;
+	
+	public List<MovesData> movesData;
 	
 	public String name;
 	
@@ -32,11 +38,12 @@ public class SummaryResponse {
         }
 	};
 	
-	public SummaryResponse(int statusCode, String name, String userId, String message, SummaryType summaryType) {
+	public SummaryResponse(int statusCode, String name, String userId, String message, List<MovesData> movesData, SummaryType summaryType) {
 		this.statusCode = statusCode;
 		this.name = name;
 		this.userId = userId;
 		this.message = message;
+		this.movesData = movesData;
 		this.summaryType = summaryType.getSummaryTypeCode();
 	}
 
@@ -54,6 +61,20 @@ public class SummaryResponse {
 		this.message = message;
 	}
 
+	/**
+	 * @return the movesData
+	 */
+	public List<MovesData> getMovesData() {
+		return movesData;
+	}
+	
+	/**
+	 * @param movesData the movesData to set
+	 */
+	public void setMovesData(List<MovesData> movesData) {
+		this.movesData = movesData;
+	}
+	
 	/**
 	 * @return the statusCode
 	 */
