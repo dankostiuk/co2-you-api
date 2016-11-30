@@ -52,7 +52,7 @@ public class MovesAuthResource {
 		 
 		if (movesTokenMap == null) {
 			return new SummaryResponse(400, null, null,
-					ERROR_SUMMARY_RESPONSE, SummaryType.ERROR);
+					ERROR_SUMMARY_RESPONSE, null, SummaryType.ERROR);
 		}
 		
 		MovesOAuthService movesOAuthService = new MovesOAuthService();
@@ -60,8 +60,8 @@ public class MovesAuthResource {
 		String response = "";
 		try {
 			if (!movesOAuthService.postCheckAuthorized(movesTokenMap)) {
-				return new SummaryResponse(400, null, null, ERROR_SUMMARY_RESPONSE
-						, SummaryType.ERROR);
+				return new SummaryResponse(400, null, null, ERROR_SUMMARY_RESPONSE,
+						null, SummaryType.ERROR);
 			}
 			
 			String authCode = movesOAuthService.authorizeAndRedirect(movesTokenMap);
@@ -69,7 +69,7 @@ public class MovesAuthResource {
 			response = movesOAuthService.getAccessToken(authCode, movesTokenMap);
 		} catch (Exception e) {
 			return new SummaryResponse(400, null, null, 
-					ERROR_SUMMARY_RESPONSE, SummaryType.ERROR);
+					ERROR_SUMMARY_RESPONSE, null, SummaryType.ERROR);
 		}
 		
 		Gson gson = new GsonBuilder()
@@ -97,7 +97,7 @@ public class MovesAuthResource {
 		movesDataManager.saveMovesData(movesData);
 		
 		return new SummaryResponse(200, null, null, 
-				"You have now linked your Moves account! Your current co2e is " + co2e, 
+				"You have now linked your Moves account! Your current co2e is " + co2e, null, 
 					SummaryType.INFO);
 	}
 }
