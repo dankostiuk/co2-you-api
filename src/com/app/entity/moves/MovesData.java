@@ -29,6 +29,9 @@ public class MovesData implements Serializable {
 	@Column(name="co2_e")
 	private double co2E;
 	
+	@Column
+	private String timestamp;
+	
 	
 	public MovesData() {
 		
@@ -80,5 +83,12 @@ public class MovesData implements Serializable {
 	 */
 	public void setCo2E(double co2e) {
 		co2E = co2e;
+	}
+	
+	/**
+	 * @return the timestamp
+	 */
+	public String getTimeStamp() {
+		return timestamp;
 	}
 }
