@@ -1,6 +1,7 @@
 package com.app.entity.moves;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ public class MovesData implements Serializable {
 	private double co2E;
 	
 	@Column
-	private String timestamp;
+	private Timestamp timestamp;
 	
 	
 	public MovesData() {
@@ -88,7 +89,14 @@ public class MovesData implements Serializable {
 	/**
 	 * @return the timestamp
 	 */
-	public String getTimeStamp() {
+	public Timestamp getTimestamp() {
 		return timestamp;
+	}
+	
+	/**
+	 * @param timestamp the timestamp to set.
+	 */
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
 	}
 }
