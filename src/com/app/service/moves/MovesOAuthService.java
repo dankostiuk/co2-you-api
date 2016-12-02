@@ -46,9 +46,6 @@ public class MovesOAuthService {
 		HttpGet request = new HttpGet(uri);
 		
 		HttpResponse response = client.execute(request);
-		
-		System.out.println("Validate Access Token Response Code : "
-                + response.getStatusLine().getStatusCode());
 
 		if (response.getStatusLine().getStatusCode() == 200) {
 			return true;

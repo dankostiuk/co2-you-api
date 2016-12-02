@@ -74,7 +74,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 			"select * from MovesData "
 				+ "where user_id='" + userId + "' "
 				+ "and "
-				+ "timestamp between " + dtStr + " and NOW() order by timestamp";
+				+ "timestamp between '" + dtStr + "' and NOW() order by timestamp";
 		
 	
 		List<MovesData> movesDataList = runNativeQuery(query);
