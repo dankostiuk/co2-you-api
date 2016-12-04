@@ -1,6 +1,7 @@
 package com.app.service.moves;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
@@ -65,6 +66,7 @@ public class MovesServiceExecutor implements IServiceExecutor {
 				MovesData movesData = new MovesData();
 				movesData.setCo2E(co2e);
 				movesData.setUserId(movesUser.getUserId());
+				movesData.setTimestamp(new Timestamp(System.currentTimeMillis()));
 				
 				_movesDataManager.saveMovesData(movesData);
 			} catch (Exception e) {
