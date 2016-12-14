@@ -35,6 +35,9 @@ public class MovesUser implements Serializable {
 	@Column(name="moves_user_id")
 	private Long movesUserId;
 	
+	@Column(name="data_row_count")
+	private Integer dataRowCount;
+	
 	public MovesUser() {
 		
 	}
@@ -116,5 +119,19 @@ public class MovesUser implements Serializable {
 	 */
 	public void setMovesUserId(Long movesUserId) {
 		this.movesUserId = movesUserId;
+	}
+
+	/**
+	 * @return the dataRowCount
+	 */
+	public Integer getDataRowCount() {
+		return dataRowCount;
+	}
+
+	/**
+	 * @param dataRowCount the dataRowCount to set
+	 */
+	public void setDataRowCount(Integer dataRowCount) {
+		this.dataRowCount = dataRowCount;
 	}
 }

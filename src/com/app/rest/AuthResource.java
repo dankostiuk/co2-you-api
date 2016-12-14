@@ -73,7 +73,7 @@ public class AuthResource {
 			throws ClientProtocolException, IOException {
 
 		if (code == null) {
-			return new SummaryResponse(400, null, null, "No 'code' param specified", null, SummaryType.ERROR);
+			return new SummaryResponse(400, null, null, "No 'code' param specified", null, 0, SummaryType.ERROR);
 		}
 
 		String uri = "https://app58285542.auth0.com/oauth/token";
@@ -92,7 +92,7 @@ public class AuthResource {
 		try {
 			post.setEntity(new UrlEncodedFormEntity(urlParameters));
 		} catch (UnsupportedEncodingException e) {
-			return new SummaryResponse(400, null, null, "Could not authorize using Auth0.", null, SummaryType.ERROR);
+			return new SummaryResponse(400, null, null, "Could not authorize using Auth0.", null, 0, SummaryType.ERROR);
 		}
 
 		HttpClient client = HttpClientBuilder.create().build();
@@ -155,10 +155,12 @@ public class AuthResource {
 				if (movesAccessToken != null) {
 					// Moves accessToken exists, display latest value
 					List<MovesData> movesDataList = _movesDataManager.findLastSevenDaysMovesDataUserId(userId);
-
+					double average = _movesDataManager.getDailyAverageForUserId(userId).getCo2E();
+					
+					
 					return new SummaryResponse(200, name, null,
 							"Your latest co2e value: " + movesDataList.get(movesDataList.size() - 1).getCo2E(),
-							movesDataList,
+							movesDataList, average, 
 							SummaryType.INFO);
 				}
 			}
@@ -178,7 +180,7 @@ public class AuthResource {
 
 		return new SummaryResponse(200, name, userId,
 				"Please enter 8 digit PIN '" + tokenMap.get("code") + "' into Moves app and press Submit.",
-				null,
+				null, 0,
 				SummaryType.REGISTER);
 	}
 

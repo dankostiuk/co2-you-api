@@ -13,6 +13,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 /**
  * Abstract class responsible for carrying out 
@@ -139,7 +140,7 @@ public abstract class AbstractManager<T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<T> runNativeQuery(String nativeQuery) {
+	public List<T> getListByNativeQuery(String nativeQuery) {
 		startTransaction();
 		try {
 			EntityTransaction t = _em.getTransaction();
@@ -148,6 +149,40 @@ public abstract class AbstractManager<T> {
 				List<T> resultList = _em.createNativeQuery(nativeQuery, _clazz).getResultList();
 				t.commit();
 				return resultList;
+			} finally {
+				if (t.isActive()) t.rollback();
+			}
+		} finally {
+			closeTransaction();
+		}
+	}
+	
+	public void updateByNativeQuery(String nativeQuery) {
+		startTransaction();
+		try {
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				Query query = _em.createNativeQuery(nativeQuery);
+				query.executeUpdate();
+				t.commit();
+			} finally {
+				if (t.isActive()) t.rollback();
+			}
+		} finally {
+			closeTransaction();
+		}
+	}
+	
+	public Object getObjectByNativeQuery(String nativeQuery) {
+		startTransaction();
+		try {
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				Object result = _em.createNativeQuery(nativeQuery).getSingleResult();
+				t.commit();
+				return result;
 			} finally {
 				if (t.isActive()) t.rollback();
 			}

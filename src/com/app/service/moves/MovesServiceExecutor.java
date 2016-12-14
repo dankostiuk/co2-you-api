@@ -69,6 +69,9 @@ public class MovesServiceExecutor implements IServiceExecutor {
 				movesData.setTimestamp(new Timestamp(System.currentTimeMillis()));
 				
 				_movesDataManager.saveMovesData(movesData);
+				
+				// increment the total data count for the user
+				_movesUserManager.incrementDataRowCount(movesUser.getUserId());
 			} catch (Exception e) {
 				System.out.println("Got exception: " + e.getMessage());
 			}
