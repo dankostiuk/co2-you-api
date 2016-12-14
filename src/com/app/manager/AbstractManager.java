@@ -174,13 +174,13 @@ public abstract class AbstractManager<T> {
 		}
 	}
 	
-	public Object getObjectByNativeQuery(String nativeQuery) {
+	public Integer getCountByNativeQuery(String nativeQuery) {
 		startTransaction();
 		try {
 			EntityTransaction t = _em.getTransaction();
 			try {
 				t.begin();
-				Object result = _em.createNativeQuery(nativeQuery).getSingleResult();
+				Integer result = (Integer) _em.createNativeQuery(nativeQuery).getSingleResult();
 				t.commit();
 				return result;
 			} finally {

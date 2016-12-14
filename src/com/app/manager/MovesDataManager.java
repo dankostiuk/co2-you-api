@@ -92,8 +92,8 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	public MovesData getDailyAverageForUserId(String userId) {
 		String query = "select * from MovesData where user_id='" + userId + "' and is_avg=b'1'";
 
-		MovesData movesData = (MovesData) getObjectByNativeQuery(query);
-		return movesData;
+		List<MovesData> movesData = getListByNativeQuery(query);
+		return movesData.get(0);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	public Integer getDataRowCountForUserId(String userId) {
 		String query = "select data_row_count from MovesUser " + "where user_id='" + userId + "'";
 
-		return (int) getObjectByNativeQuery(query);
+		return getCountByNativeQuery(query);
 	}
 
 	/**
