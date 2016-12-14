@@ -75,7 +75,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 		String dtStr = fmt.print(sevenDaysAgo);
 
 		String query = "select * from MovesData " + "where user_id='" + userId + "' " + "and "
-				+ "(is_avg is null or is_avg='0')" + "and " + "timestamp between '" + dtStr
+				+ "(is_avg is null or is_avg=b'0')" + "and " + "timestamp between '" + dtStr
 				+ "' and NOW() order by timestamp";
 
 		List<MovesData> movesDataList = getListByNativeQuery(query);
@@ -90,7 +90,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	 * @return The average daily co2e.
 	 */
 	public MovesData getDailyAverageForUserId(String userId) {
-		String query = "select * from MovesData where user_id='" + userId + "' and is_avg='1'";
+		String query = "select * from MovesData where user_id='" + userId + "' and is_avg=b'1'";
 
 		MovesData movesData = (MovesData) getObjectByNativeQuery(query);
 		return movesData;
