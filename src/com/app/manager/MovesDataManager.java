@@ -74,8 +74,9 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 		String dtStr = fmt.print(sevenDaysAgo);
 
-		String query = "select * from MovesData " + "where user_id='" + userId + "' " + "and " + "'is_avg'!=true"
-				+ "and " + "timestamp between '" + dtStr + "' and NOW() order by timestamp";
+		String query = "select * from MovesData " + "where user_id='" + userId + "' " + "and "
+				+ "(is_avg is null or is_avg='0')" + "and " + "timestamp between '" + dtStr
+				+ "' and NOW() order by timestamp";
 
 		List<MovesData> movesDataList = getListByNativeQuery(query);
 		return movesDataList;
@@ -89,7 +90,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	 * @return The average daily co2e.
 	 */
 	public MovesData getDailyAverageForUserId(String userId) {
-		String query = "select * from MovesData " + "where user_id='" + userId + "' " + "and " + "'is_avg'=true";
+		String query = "select * from MovesData " + "where user_id='" + userId + "' " + "and " + "is_avg='1'";
 
 		List<MovesData> movesDataList = getListByNativeQuery(query);
 		return movesDataList.get(0);
@@ -132,14 +133,17 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 
 		updateDailyAverage(movesData);
 	}
-	
+
 	/**
-	 * Updates the MovesData daily average by getting the average of current co2e
-	 * plus incoming movesData co2e divided by the total row count for the movesData user.
-	 * @param movesData The incoming movesData that has been saved.
+	 * Updates the MovesData daily average by getting the average of current
+	 * co2e plus incoming movesData co2e divided by the total row count for the
+	 * movesData user.
+	 * 
+	 * @param movesData
+	 *            The incoming movesData that has been saved.
 	 */
 	private void updateDailyAverage(MovesData movesData) {
-		
+
 		MovesData dailyAverage = getDailyAverageForUserId(movesData.getUserId());
 		if (dailyAverage == null) {
 			dailyAverage = new MovesData();
@@ -152,14 +156,13 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 			newAverage = (dailyAverage.getCo2E() + movesData.getCo2E()) / movesDataRowCount;
 			dailyAverage.setCo2E(newAverage);
 		}
-		
+
 		// try to save a new average, if it exists, perform a native update
 		try {
 			writeTransaction(dailyAverage);
 		} catch (EntityExistsException eee) {
-			String query = "update MovesData "
-					+ "set co2_e=" + dailyAverage.getCo2E()
-					+ "where id='" + dailyAverage.getId() + "'";
+			String query = "update MovesData " + "set co2_e=" + dailyAverage.getCo2E() + "where id='"
+					+ dailyAverage.getId() + "'";
 			updateByNativeQuery(query);
 		}
 	}
