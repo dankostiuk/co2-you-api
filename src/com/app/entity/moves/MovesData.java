@@ -31,7 +31,7 @@ public class MovesData implements Serializable {
 	private double co2E;
 	
 	@Column(name="is_avg")
-	private boolean isAverage;
+	private Boolean isAverage;
 	
 	@Column
 	private Timestamp timestamp;
@@ -93,14 +93,14 @@ public class MovesData implements Serializable {
 	/**
 	 * @return the isAverage
 	 */
-	public boolean isAverage() {
+	public Boolean isAverage() {
 		return isAverage;
 	}
 
 	/**
 	 * @param isAverage the isAverage to set
 	 */
-	public void setAverage(boolean isAverage) {
+	public void setAverage(Boolean isAverage) {
 		this.isAverage = isAverage;
 	}
 
