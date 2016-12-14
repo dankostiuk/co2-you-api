@@ -90,10 +90,10 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	 * @return The average daily co2e.
 	 */
 	public MovesData getDailyAverageForUserId(String userId) {
-		String query = "select * from MovesData " + "where user_id='" + userId + "' " + "and " + "is_avg='1'";
+		String query = "select * from MovesData where user_id='" + userId + "' and is_avg='1'";
 
-		List<MovesData> movesDataList = getListByNativeQuery(query);
-		return movesDataList.get(0);
+		MovesData movesData = (MovesData) getObjectByNativeQuery(query);
+		return movesData;
 	}
 
 	/**
