@@ -162,17 +162,25 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 
 		// try to save a new average, if it exists, perform a native update
 		try {
-			writeTransaction(dailyAverage);
+			if (dailyAverage.getId() == null || dailyAverage.getId() == -1) {
+				writeTransaction(dailyAverage);
+			} else {
+				LOG.debug("MovesData dailyAverage already exists for userId " + movesData.getUserId()
+						+ ". Trying to update...");
+
+				updateTransaction(dailyAverage);
+			}
+
 		} catch (EntityExistsException eee) {
-			
-			LOG.debug("MovesData dailyAverage already exists for userId "
-					+ movesData.getUserId() + ". Trying to update...", eee);
-			
+
+			LOG.debug(
+					"Exception occured while saving/updating MovesData dailyAverage. Trying to update by native query. ",
+					eee);
+
 			String query = "update MovesData " + "set co2_e=" + dailyAverage.getCo2E() + "where id='"
 					+ dailyAverage.getId() + "'";
 			updateByNativeQuery(query);
-			
-			LOG.debug("Updated dailyAverage for userId " + movesData.getUserId());
 		}
+		LOG.debug("Updated dailyAverage for userId " + movesData.getUserId());
 	}
 }

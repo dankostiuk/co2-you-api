@@ -55,6 +55,22 @@ public abstract class AbstractManager<T> {
 		}
 	}
 	
+	public void updateTransaction(T object) {
+		startTransaction();
+		try {
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				_em.merge(object);
+				t.commit();
+			} finally {
+				if (t.isActive()) t.rollback();
+			}
+		} finally {
+			closeTransaction();
+		}
+	}
+	
 	public T readTransaction(long id) {
 		startTransaction();
 		try {
