@@ -6,6 +6,8 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 
+import org.apache.log4j.Logger;
+
 import com.app.entity.User;
 
 /**
@@ -14,6 +16,8 @@ import com.app.entity.User;
  * @author dan
  */
 public class UserManager extends AbstractManager<User> {
+	
+	private final static Logger LOG = Logger.getLogger(UserManager.class);
 	
 	public UserManager() {
 		super(User.class);
@@ -42,6 +46,7 @@ public class UserManager extends AbstractManager<User> {
 	 * @throws EntityNotFoundException If an error occurs.
 	 */
 	public User findUser(String userId) throws EntityNotFoundException {
+		LOG.debug("Attempting to find User by userId " + userId);
 		User user = findTransaction("userId", userId);
 		
 		return user;
@@ -66,6 +71,8 @@ public class UserManager extends AbstractManager<User> {
 		if (user.getId() == null || user.getId() == -1) {
 			writeTransaction(user);
 		} else {
+			LOG.debug("Saving User " + user.getId());
+			
 			User currentUser = readTransaction(user.getId());
 			
 			if (user.getOauthAccessToken() != null) {

@@ -6,6 +6,8 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
 
+import org.apache.log4j.Logger;
+
 import com.app.entity.moves.MovesUser;
 
 /**
@@ -15,6 +17,8 @@ import com.app.entity.moves.MovesUser;
  */
 public class MovesUserManager extends AbstractManager<MovesUser> {
 
+	private final static Logger LOG = Logger.getLogger(MovesUserManager.class);
+	
 	public MovesUserManager() {
 		super(MovesUser.class);
 	}
@@ -48,6 +52,8 @@ public class MovesUserManager extends AbstractManager<MovesUser> {
 	 *             If an error occurs.
 	 */
 	public MovesUser findMovesUserByUserId(String userId) throws EntityNotFoundException {
+		LOG.debug("Attempting to find MovesUser by userId " + userId);
+		
 		MovesUser movesUser = findTransaction("userId", userId);
 
 		return movesUser;
@@ -74,7 +80,11 @@ public class MovesUserManager extends AbstractManager<MovesUser> {
 
 		if (movesUser.getId() == null || movesUser.getId() == -1) {
 			writeTransaction(movesUser);
+			
+			
 		} else {
+			LOG.debug("Saving MovesUser " + movesUser.getId());
+			
 			MovesUser currentMovesUser = readTransaction(movesUser.getId());
 
 			if (movesUser.getAccessToken() != null) {
@@ -98,6 +108,8 @@ public class MovesUserManager extends AbstractManager<MovesUser> {
 		String query = "update MovesUser "
 				+ "set data_row_count = data_row_count + 1 "
 				+ "where user_id='" + movesUserId + "'";
+		
+		LOG.debug("Updating data_row_count for MovesUser " + movesUserId);
 		
 		updateByNativeQuery(query);
 	}
