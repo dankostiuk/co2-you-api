@@ -46,7 +46,7 @@ public class UserManager extends AbstractManager<User> {
 	 * @throws EntityNotFoundException If an error occurs.
 	 */
 	public User findUser(String userId) throws EntityNotFoundException {
-		LOG.debug("Attempting to find User by userId " + userId);
+		System.out.println("Attempting to find User by userId " + userId);
 		User user = findTransaction("userId", userId);
 		
 		return user;
@@ -71,7 +71,7 @@ public class UserManager extends AbstractManager<User> {
 		if (user.getId() == null || user.getId() == -1) {
 			writeTransaction(user);
 		} else {
-			LOG.debug("Saving User " + user.getId());
+			System.out.println("Saving User " + user.getId());
 			
 			User currentUser = readTransaction(user.getId());
 			

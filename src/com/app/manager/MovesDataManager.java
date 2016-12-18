@@ -54,7 +54,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	 */
 	public List<MovesData> findLastSevenDaysMovesDataUserId(String userId) {
 
-		LOG.debug("Attempting to get last 7 days of MovesData for userId " + userId);
+		System.out.println("Attempting to get last 7 days of MovesData for userId " + userId);
 
 		DateTime dt = new DateTime();
 		DateTime sevenDaysAgo = dt.minusDays(7);
@@ -78,7 +78,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	 */
 	public MovesData getDailyAverageForUserId(String userId) {
 
-		LOG.debug("Attempting to get dailyAverage for userId " + userId);
+		System.out.println("Attempting to get dailyAverage for userId " + userId);
 
 		String query = "select * from MovesData where user_id='" + userId + "' and is_avg=b'1'";
 
@@ -98,7 +98,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 		String query = "select data_row_count from MovesUser " + "where user_id='" + userId + "'";
 
 		Integer dataRowCount = getCountByNativeQuery(query);
-		LOG.debug("Got data_row_count " + dataRowCount + " for userId " + userId);
+		System.out.println("Got data_row_count " + dataRowCount + " for userId " + userId);
 
 		return dataRowCount;
 	}
@@ -125,7 +125,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 		// save the incoming data
 		writeTransaction(movesData);
 
-		LOG.debug("Saved incoming MovesData for userId " + movesData.getUserId());
+		System.out.println("Saved incoming MovesData for userId " + movesData.getUserId());
 
 		updateDailyAverage(movesData);
 	}
@@ -140,24 +140,24 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	 */
 	private void updateDailyAverage(MovesData movesData) {
 
-		LOG.debug("Attempting to update dailyAverage for userId " + movesData.getUserId());
+		System.out.println("Attempting to update dailyAverage for userId " + movesData.getUserId());
 
 		MovesData dailyAverage = getDailyAverageForUserId(movesData.getUserId());
 		if (dailyAverage == null) {
-			LOG.debug("Current dailyAverage not set, creating new dailyAverage for user " + movesData.getUserId());
+			System.out.println("Current dailyAverage not set, creating new dailyAverage for user " + movesData.getUserId());
 			dailyAverage = new MovesData();
 			dailyAverage.setAverage(true);
 			dailyAverage.setUserId(movesData.getUserId());
 			dailyAverage.setCo2E(movesData.getCo2E());
 		} else {
-			LOG.debug("Current dailyAverage set, finding data_row_count for user " + movesData.getUserId());
+			System.out.println("Current dailyAverage set, finding data_row_count for user " + movesData.getUserId());
 			double newAverage;
 			int movesDataRowCount = getDataRowCountForUserId(movesData.getUserId());
 			newAverage = (dailyAverage.getCo2E() + movesData.getCo2E()) / movesDataRowCount;
 			dailyAverage.setCo2E(newAverage);
 		}
 
-		LOG.debug("Attempting to save new dailyAverage with co2e '" + dailyAverage.getCo2E() + "' for userId "
+		System.out.println("Attempting to save new dailyAverage with co2e '" + dailyAverage.getCo2E() + "' for userId "
 				+ movesData.getUserId());
 
 		// try to save a new average, if it exists, perform a native update
@@ -165,7 +165,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 			if (dailyAverage.getId() == null || dailyAverage.getId() == -1) {
 				writeTransaction(dailyAverage);
 			} else {
-				LOG.debug("MovesData dailyAverage already exists for userId " + movesData.getUserId()
+				System.out.println("MovesData dailyAverage already exists for userId " + movesData.getUserId()
 						+ ". Trying to update...");
 
 				updateTransaction(dailyAverage);
@@ -173,14 +173,14 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 
 		} catch (EntityExistsException eee) {
 
-			LOG.debug(
-					"Exception occured while saving/updating MovesData dailyAverage. Trying to update by native query. ",
-					eee);
+			System.out.println(
+					"Exception occured while saving/updating MovesData dailyAverage. Trying to update by native query. " +
+					eee.getMessage());
 
 			String query = "update MovesData " + "set co2_e=" + dailyAverage.getCo2E() + "where id='"
 					+ dailyAverage.getId() + "'";
 			updateByNativeQuery(query);
 		}
-		LOG.debug("Updated dailyAverage for userId " + movesData.getUserId());
+		System.out.println("Updated dailyAverage for userId " + movesData.getUserId());
 	}
 }

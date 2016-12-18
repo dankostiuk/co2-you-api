@@ -51,11 +51,11 @@ public class MovesAuthResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public SummaryResponse authenticateMoves(@QueryParam("user_id") String userId) throws ClientProtocolException, IOException {
-		LOG.debug("Attempting to authenticate Moves with userId " + userId);
+		System.out.println("Attempting to authenticate Moves with userId " + userId);
 		
 		Map<String, String> movesTokenMap = _contextCache.get(userId + "movesTokenMap");
 		
-		LOG.debug("Got movesTokenMap from contextCache for userId " + userId);
+		System.out.println("Got movesTokenMap from contextCache for userId " + userId);
 		
 		if (movesTokenMap == null) {
 			return new SummaryResponse(400, null, null,
@@ -67,14 +67,14 @@ public class MovesAuthResource {
 		String response = "";
 		try {
 			
-			LOG.debug("Trying to authorize Moves with 8-digit code entered by user.");
+			System.out.println("Trying to authorize Moves with 8-digit code entered by user.");
 			
 			if (!movesOAuthService.postCheckAuthorized(movesTokenMap)) {
 				return new SummaryResponse(400, null, null, ERROR_SUMMARY_RESPONSE,
 						null, 0, SummaryType.ERROR);
 			}
 			
-			LOG.debug("Moves 8-digit code authorize success. Attempt to get accessToken.");
+			System.out.println("Moves 8-digit code authorize success. Attempt to get accessToken.");
 			
 			String authCode = movesOAuthService.authorizeAndRedirect(movesTokenMap);
 			
@@ -84,7 +84,7 @@ public class MovesAuthResource {
 					ERROR_SUMMARY_RESPONSE, null, 0, SummaryType.ERROR);
 		}
 		
-		LOG.debug("Successfully obtained Moves accessToken for userId " + userId);
+		System.out.println("Successfully obtained Moves accessToken for userId " + userId);
 		
 		Gson gson = new GsonBuilder()
 			    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -92,7 +92,7 @@ public class MovesAuthResource {
 		
 		TokenResponse tokenResponse = gson.fromJson(response, TokenResponse.class);
 		
-		LOG.debug("Attempt to save new MovesUser containing necessary Moves tokens");
+		System.out.println("Attempt to save new MovesUser containing necessary Moves tokens");
 		
 		// save new MovesUser containing necessary Moves tokens
 		MovesUserManager movesUserManager = new MovesUserManager();
@@ -102,12 +102,12 @@ public class MovesAuthResource {
 		movesUser.setUserId(userId);
 		movesUserManager.saveMovesUser(movesUser);
 		
-		LOG.debug("Attempt to retrieve daily co2e for MovesUser with userId " + userId);
+		System.out.println("Attempt to retrieve daily co2e for MovesUser with userId " + userId);
 		
 		MovesApiService apiService = new MovesApiService();
 		double co2e = apiService.getDailyCarbon(tokenResponse.getAccessToken());
 		
-		LOG.debug("Daily co2e '" + co2e + "' retrieved for MovesUser with userId " + userId);
+		System.out.println("Daily co2e '" + co2e + "' retrieved for MovesUser with userId " + userId);
 		
 		MovesData movesData = new MovesData();
 		movesData.setCo2E(co2e);
@@ -116,12 +116,12 @@ public class MovesAuthResource {
 		MovesDataManager movesDataManager = new MovesDataManager();
 		movesDataManager.saveMovesData(movesData);
 		
-		LOG.debug("Saved MovesData for userId " + userId);
+		System.out.println("Saved MovesData for userId " + userId);
 		
 		// increment the total data count for the user
 		movesUserManager.incrementDataRowCount(movesUser.getUserId());
 		
-		LOG.debug("Incremented data_row_count for MovesUser with userId " + userId);
+		System.out.println("Incremented data_row_count for MovesUser with userId " + userId);
 		
 		return new SummaryResponse(200, null, null, 
 				"You have now linked your Moves account! Your current co2e is " + co2e, null, 0,

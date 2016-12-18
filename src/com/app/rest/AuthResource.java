@@ -75,7 +75,7 @@ public class AuthResource {
 	public SummaryResponse processCallback(@QueryParam("code") String code)
 			throws ClientProtocolException, IOException {
 
-		LOG.debug("Processing login callback for code " + code);
+		System.out.println("Processing login callback for code " + code);
 
 		if (code == null) {
 			return new SummaryResponse(400, null, null, "No 'code' param specified", null, 0, SummaryType.ERROR);
@@ -100,7 +100,7 @@ public class AuthResource {
 			return new SummaryResponse(400, null, null, "Could not authorize using Auth0.", null, 0, SummaryType.ERROR);
 		}
 
-		LOG.debug("Attempting to get Auth0 authorization_code response for code " + code);
+		System.out.println("Attempting to get Auth0 authorization_code response for code " + code);
 
 		HttpClient client = HttpClientBuilder.create().build();
 		HttpResponse response = client.execute(post);
@@ -113,8 +113,8 @@ public class AuthResource {
 		// get access token
 		String accessToken = tokenResponse.getAccessToken();
 
-		LOG.debug("Got accesstoken " + accessToken + " from Auth0 authorization_code response.");
-		LOG.debug("Attempting to get userinfo json from Auth0 for accessToken " + accessToken);
+		System.out.println("Got accesstoken " + accessToken + " from Auth0 authorization_code response.");
+		System.out.println("Attempting to get userinfo json from Auth0 for accessToken " + accessToken);
 
 		String getUri = "https://app58285542.auth0.com/userinfo/?access_token=" + accessToken;
 		HttpGet get = new HttpGet(getUri);
@@ -123,7 +123,7 @@ public class AuthResource {
 
 		String auth0UserInfo = responseToString(getResponse);
 
-		LOG.debug("Got Auth0 userinfo json, attempting to process username");
+		System.out.println("Got Auth0 userinfo json, attempting to process username");
 		SummaryResponse summaryResponse = processUsername(auth0UserInfo, accessToken);
 		return summaryResponse;
 	}
@@ -150,13 +150,13 @@ public class AuthResource {
 		String name = array.get("given_name") == null ? array.get("name").textValue()
 				: array.get("given_name").textValue();
 
-		LOG.debug("Checking db if user exists for userId " + userId);
+		System.out.println("Checking db if user exists for userId " + userId);
 		
 		// save if user doesn't exist in db, otherwise continue
 		User user = _userManager.findUser(userId);
 		if (user != null) {
 
-			LOG.debug("User with userId " + userId + " exists, so check if authenticated with Moves.");
+			System.out.println("User with userId " + userId + " exists, so check if authenticated with Moves.");
 
 			// check if user authenticated with Moves
 			MovesUser movesUser = _movesUserManager.findMovesUserByUserId(userId);
@@ -164,7 +164,7 @@ public class AuthResource {
 			String movesAccessToken = "";
 			if (movesUser != null) {
 				
-				LOG.debug("User with userId " + userId + " is authenticated with moves, so send back latest data.");
+				System.out.println("User with userId " + userId + " is authenticated with moves, so send back latest data.");
 				
 				movesAccessToken = movesUser.getAccessToken();
 
@@ -179,12 +179,12 @@ public class AuthResource {
 							"Your latest co2e value: " + movesDataList.get(movesDataList.size() - 1).getCo2E(),
 							movesDataList, average, SummaryType.INFO);
 				} else {
-					LOG.debug("User with userId " + userId + " has MovesUser but no movesAccessToken. INVESTIGATE");
+					System.out.println("User with userId " + userId + " has MovesUser but no movesAccessToken. INVESTIGATE");
 				}
 			}
 		} else {
 			
-			LOG.debug("User with userId " + userId + " doesn't exist, so save their info + auth0 access_token.");
+			System.out.println("User with userId " + userId + " doesn't exist, so save their info + auth0 access_token.");
 			
 			// user doesn't currently exist, save it
 			User newUser = new User();
@@ -194,7 +194,7 @@ public class AuthResource {
 			_userManager.saveUser(newUser);
 		}
 
-		LOG.debug("Adding movesTokenMap to contextCache for userId " + userId);
+		System.out.println("Adding movesTokenMap to contextCache for userId " + userId);
 		
 		MovesOAuthService movesAuthService = new MovesOAuthService();
 		Map<String, String> tokenMap = movesAuthService.getTokenMap();

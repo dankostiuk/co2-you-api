@@ -45,15 +45,15 @@ public class MovesServiceExecutor implements IServiceExecutor {
 	@Override
 	public void execute() {
 
-		LOG.debug("Starting MovesServiceExecutor...");
+		System.out.println("Starting MovesServiceExecutor...");
 
 		List<MovesUser> movesUsers = _movesUserManager.getAll();
 		for (MovesUser movesUser : movesUsers) {
-			LOG.debug("Carrying out Moves routine for MovesUser with userId " + movesUser.getUserId());
+			System.out.println("Carrying out Moves routine for MovesUser with userId " + movesUser.getUserId());
 			String accessToken = movesUser.getAccessToken();
 
 			if (accessToken == null) {
-				LOG.debug(
+				System.out.println(
 						"No accessToken detected for MovesUser with userId " + movesUser.getUserId() + ", skipping..");
 				continue;
 			}
@@ -61,12 +61,12 @@ public class MovesServiceExecutor implements IServiceExecutor {
 			try {
 				if (!_authService.validateAccessToken(accessToken)) {
 
-					LOG.debug("AccessToken not valid, attempting refresh of tokens");
+					System.out.println("AccessToken not valid, attempting refresh of tokens");
 
 					// try refreshing first
 					TokenResponse tokenResponse = _authService.refreshTokens(movesUser.getRefreshToken());
 
-					LOG.debug("Refresh of tokens success, attempting to save MovesUser with updated tokens.");
+					System.out.println("Refresh of tokens success, attempting to save MovesUser with updated tokens.");
 
 					accessToken = tokenResponse.getAccessToken();
 					movesUser.setAccessToken(accessToken);
@@ -76,7 +76,7 @@ public class MovesServiceExecutor implements IServiceExecutor {
 
 				double co2e = _apiService.getDailyCarbon(accessToken);
 
-				LOG.debug("Got daily co2e value " + co2e + " for MovesUser with userId " + movesUser.getUserId());
+				System.out.println("Got daily co2e value " + co2e + " for MovesUser with userId " + movesUser.getUserId());
 
 				MovesData movesData = new MovesData();
 				movesData.setCo2E(co2e);
@@ -85,14 +85,14 @@ public class MovesServiceExecutor implements IServiceExecutor {
 
 				_movesDataManager.saveMovesData(movesData);
 				
-				LOG.debug("Saved co2e value and timestamp to MovesUser table for userId " + movesUser.getUserId());
+				System.out.println("Saved co2e value and timestamp to MovesUser table for userId " + movesUser.getUserId());
 
 				// increment the total data count for the user
 				_movesUserManager.incrementDataRowCount(movesUser.getUserId());
 				
-				LOG.debug("Incremented data_row_count for MovesUser with userId " + movesUser.getUserId());
+				System.out.println("Incremented data_row_count for MovesUser with userId " + movesUser.getUserId());
 			} catch (Exception e) {
-				LOG.debug("Exception occured for userId " + movesUser.getUserId(), e);
+				System.out.println("Exception occured for userId " + movesUser.getUserId() + ": " + e.getMessage());
 			}
 		}
 	}

@@ -52,7 +52,7 @@ public class MovesUserManager extends AbstractManager<MovesUser> {
 	 *             If an error occurs.
 	 */
 	public MovesUser findMovesUserByUserId(String userId) throws EntityNotFoundException {
-		LOG.debug("Attempting to find MovesUser by userId " + userId);
+		System.out.println("Attempting to find MovesUser by userId " + userId);
 		
 		MovesUser movesUser = findTransaction("userId", userId);
 
@@ -83,7 +83,7 @@ public class MovesUserManager extends AbstractManager<MovesUser> {
 			
 			
 		} else {
-			LOG.debug("Saving MovesUser " + movesUser.getId());
+			System.out.println("Saving MovesUser " + movesUser.getId());
 			
 			MovesUser currentMovesUser = readTransaction(movesUser.getId());
 
@@ -109,7 +109,7 @@ public class MovesUserManager extends AbstractManager<MovesUser> {
 				+ "set data_row_count = data_row_count + 1 "
 				+ "where user_id='" + movesUserId + "'";
 		
-		LOG.debug("Updating data_row_count for MovesUser " + movesUserId);
+		System.out.println("Updating data_row_count for MovesUser " + movesUserId);
 		
 		updateByNativeQuery(query);
 	}
