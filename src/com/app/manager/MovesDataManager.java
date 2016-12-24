@@ -168,7 +168,10 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 				System.out.println("MovesData dailyAverage already exists for userId " + movesData.getUserId()
 						+ ". Trying to update...");
 
-				updateTransaction(dailyAverage);
+				//updateTransaction(dailyAverage);
+				String query = "update MovesData " + "set co2_e=" + dailyAverage.getCo2E() + "where id='"
+						+ dailyAverage.getId() + "'";
+				updateByNativeQuery(query);
 			}
 
 		} catch (EntityExistsException eee) {
