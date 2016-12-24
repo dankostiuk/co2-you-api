@@ -153,7 +153,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 			System.out.println("Current dailyAverage set, finding data_row_count for user " + movesData.getUserId());
 			double newAverage;
 			int movesDataRowCount = getDataRowCountForUserId(movesData.getUserId());
-			newAverage = (dailyAverage.getCo2E() + movesData.getCo2E()) / movesDataRowCount;
+			newAverage = (dailyAverage.getCo2E()*(movesDataRowCount-1) + movesData.getCo2E()) / movesDataRowCount;
 			dailyAverage.setCo2E(newAverage);
 		}
 
@@ -168,7 +168,6 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 				System.out.println("MovesData dailyAverage already exists for userId " + movesData.getUserId()
 						+ ". Trying to update...");
 
-				//updateTransaction(dailyAverage);
 				String query = "update MovesData " + "set co2_e=" + dailyAverage.getCo2E() + "where id='"
 						+ dailyAverage.getId() + "'";
 				updateByNativeQuery(query);
@@ -177,12 +176,8 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 		} catch (EntityExistsException eee) {
 
 			System.out.println(
-					"Exception occured while saving/updating MovesData dailyAverage. Trying to update by native query. " +
+					"Exception occured while saving/updating MovesData dailyAverage. " +
 					eee.getMessage());
-
-			String query = "update MovesData " + "set co2_e=" + dailyAverage.getCo2E() + "where id='"
-					+ dailyAverage.getId() + "'";
-			updateByNativeQuery(query);
 		}
 		System.out.println("Updated dailyAverage for userId " + movesData.getUserId());
 	}
