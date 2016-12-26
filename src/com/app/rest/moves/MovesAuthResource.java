@@ -100,6 +100,7 @@ public class MovesAuthResource {
 		movesUser.setAccessToken(tokenResponse.getAccessToken());
 		movesUser.setRefreshToken(tokenResponse.getRefreshToken());
 		movesUser.setUserId(userId);
+		movesUser.setDataRowCount(0);
 		movesUserManager.saveMovesUser(movesUser);
 		
 		System.out.println("Attempt to retrieve daily co2e for MovesUser with userId " + userId);

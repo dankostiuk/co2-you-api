@@ -71,6 +71,7 @@ public class MovesServiceExecutor implements IServiceExecutor {
 					accessToken = tokenResponse.getAccessToken();
 					movesUser.setAccessToken(accessToken);
 					movesUser.setRefreshToken(tokenResponse.getRefreshToken());
+					movesUser.setDataRowCount(0);
 					_movesUserManager.saveMovesUser(movesUser);
 				}
 
