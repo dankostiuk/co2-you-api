@@ -1,7 +1,5 @@
-# GreenCalculator
+# CO2 & You
 
 <h2>Instructions to run</h2>
-To run from terminal, run the following inside the directory containing main.jar:
-<br><br>
-java -jar main.jar
+Visit <a href="https://app.co2you.com">app.co2you.com</a>, register an account and follow the instructions.
 
