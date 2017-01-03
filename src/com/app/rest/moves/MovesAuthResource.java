@@ -1,6 +1,7 @@
 package com.app.rest.moves;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -113,6 +114,9 @@ public class MovesAuthResource {
 		MovesData movesData = new MovesData();
 		movesData.setCo2E(co2e);
 		movesData.setUserId(movesUser.getUserId());
+		
+		// timestamp needs to be non-null
+		movesData.setTimestamp(new Timestamp(System.currentTimeMillis()));
 		
 		MovesDataManager movesDataManager = new MovesDataManager();
 		movesDataManager.saveMovesData(movesData);

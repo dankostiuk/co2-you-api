@@ -181,6 +181,8 @@ public class AuthResource {
 				} else {
 					System.out.println("User with userId " + userId + " has MovesUser but no movesAccessToken. INVESTIGATE");
 				}
+			} else {
+				System.out.println("MovesUser does not exist for userId " + userId + ". ");
 			}
 		} else {
 			

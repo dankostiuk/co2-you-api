@@ -1,5 +1,6 @@
 package com.app.manager;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -56,14 +57,19 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 
 		System.out.println("Attempting to get last 7 days of MovesData for userId " + userId);
 
+		// 7 days ago
 		DateTime dt = new DateTime();
 		DateTime sevenDaysAgo = dt.minusDays(7);
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 		String dtStr = fmt.print(sevenDaysAgo);
+		
+		// now
+		DateTime dt2 = new DateTime();
+		String dtStr2 = fmt.print(dt2);
 
 		String query = "select * from MovesData " + "where user_id='" + userId + "' " + "and "
 				+ "(is_avg is null or is_avg=b'0')" + "and " + "timestamp between '" + dtStr
-				+ "' and NOW() order by timestamp";
+				+ "' and '" + dtStr2 + "' order by timestamp";
 
 		List<MovesData> movesDataList = getListByNativeQuery(query);
 		return movesDataList;
@@ -149,6 +155,7 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 			dailyAverage.setAverage(true);
 			dailyAverage.setUserId(movesData.getUserId());
 			dailyAverage.setCo2E(movesData.getCo2E());
+			dailyAverage.setTimestamp(new Timestamp(System.currentTimeMillis()));
 		} else {
 			System.out.println("Current dailyAverage set, finding data_row_count for user " + movesData.getUserId());
 			double newAverage;
@@ -180,5 +187,50 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 					eee.getMessage());
 		}
 		System.out.println("Updated dailyAverage for userId " + movesData.getUserId());
+	}
+	
+	/**
+	 * Deletes any existing MovesData entries added within the current day for the given
+	 * Moves userId.
+	 * 
+	 * @param userId The Moves userId.
+	 */
+	public void deleteExistingMovesData(String userId) {
+		
+		System.out.println("Attempting to delete any previous MovesData records saved today for userId " + userId);
+
+		// start of day
+		DateTime dt = new DateTime();
+		DateTime startOfDay = dt.withTimeAtStartOfDay();
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		String dtStr = fmt.print(startOfDay);
+		
+		// now
+		DateTime dt2 = new DateTime();
+		String dtStr2 = fmt.print(dt2);
+		
+		String query = "delete from MovesData where user_id='" + userId + "' and (is_avg is null or is_avg=b'0')"
+				+ "and timestamp between '" + dtStr + "' and '" + dtStr2 + "'"; 
+		
+		updateByNativeQuery(query);
+	}
+	
+	/*
+	 * To test out timeformatting
+	 */
+	public static void main(String args[]) {
+		DateTime dt = new DateTime();
+		DateTime startOfDay = dt.withTimeAtStartOfDay();
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		String dtStr = fmt.print(startOfDay);
+		
+		System.out.println(dtStr);
+		
+		DateTime dt2 = new DateTime();
+		String dtStr2 = fmt.print(dt2);
+		
+		System.out.println(dtStr2);
+		
+		System.out.println(new Timestamp(System.currentTimeMillis()));
 	}
 }

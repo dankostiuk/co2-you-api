@@ -79,9 +79,15 @@ public class MovesServiceExecutor implements IServiceExecutor {
 
 				System.out.println("Got daily co2e value " + co2e + " for MovesUser with userId " + movesUser.getUserId());
 
+				// delete any existing movesData for the same day to ensure we avoid having 
+				// more than 1 MovesData captured for today
+				_movesDataManager.deleteExistingMovesData(movesUser.getUserId());
+				
 				MovesData movesData = new MovesData();
 				movesData.setCo2E(co2e);
 				movesData.setUserId(movesUser.getUserId());
+				
+				// timestamp needs to be non-null
 				movesData.setTimestamp(new Timestamp(System.currentTimeMillis()));
 
 				_movesDataManager.saveMovesData(movesData);
