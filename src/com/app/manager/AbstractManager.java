@@ -207,6 +207,23 @@ public abstract class AbstractManager<T> {
 		}
 	}
 	
+	public Double getDoubleByNativeQuery(String nativeQuery) {
+		startTransaction();
+		try {
+			EntityTransaction t = _em.getTransaction();
+			try {
+				t.begin();
+				Double result = (Double) _em.createNativeQuery(nativeQuery).getSingleResult();
+				t.commit();
+				return result;
+			} finally {
+				if (t.isActive()) t.rollback();
+			}
+		} finally {
+			closeTransaction();
+		}
+	}
+	
 	/**
 	 * Connect to Heroku db
 	 * @return

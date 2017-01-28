@@ -60,7 +60,7 @@ public class MovesAuthResource {
 		
 		if (movesTokenMap == null) {
 			return new SummaryResponse(400, null, null,
-					ERROR_SUMMARY_RESPONSE, null, 0, SummaryType.ERROR);
+					ERROR_SUMMARY_RESPONSE, null, SummaryType.ERROR);
 		}
 		
 		MovesOAuthService movesOAuthService = new MovesOAuthService();
@@ -72,7 +72,7 @@ public class MovesAuthResource {
 			
 			if (!movesOAuthService.postCheckAuthorized(movesTokenMap)) {
 				return new SummaryResponse(400, null, null, ERROR_SUMMARY_RESPONSE,
-						null, 0, SummaryType.ERROR);
+						null, SummaryType.ERROR);
 			}
 			
 			System.out.println("Moves 8-digit code authorize success. Attempt to get accessToken.");
@@ -82,7 +82,7 @@ public class MovesAuthResource {
 			response = movesOAuthService.getAccessToken(authCode, movesTokenMap);
 		} catch (Exception e) {
 			return new SummaryResponse(400, null, null, 
-					ERROR_SUMMARY_RESPONSE, null, 0, SummaryType.ERROR);
+					ERROR_SUMMARY_RESPONSE, null, SummaryType.ERROR);
 		}
 		
 		System.out.println("Successfully obtained Moves accessToken for userId " + userId);
@@ -129,7 +129,7 @@ public class MovesAuthResource {
 		System.out.println("Incremented data_row_count for MovesUser with userId " + userId);
 		
 		return new SummaryResponse(200, null, null, 
-				"You have now linked your Moves account! Your current co2e is " + co2e, null, 0,
+				"You have now linked your Moves account! Your current co2e is " + co2e, null,
 					SummaryType.INFO);
 	}
 }

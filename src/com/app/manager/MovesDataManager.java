@@ -9,6 +9,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -90,6 +91,39 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 
 		List<MovesData> movesData = getListByNativeQuery(query);
 		return movesData.get(0);
+	}
+	
+	/**
+	 * Gets the Moves total co2e emitted in the last week for the specified userId
+	 * @param userId The user id to obtain the last weeks co2e for.
+	 * @return The total amount of co2e emitted in the previous week.
+	 */
+	public double getLastWeekTotalForUserId(String userId) {
+		System.out.println("Attempting to get last week total co2e for userId " + userId);
+		
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		
+		// start of last monday
+		DateTime startOfDay = new DateTime().withTime(0, 0, 0, 0);
+		DateTime currentMonday = startOfDay.withDayOfWeek(DateTimeConstants.MONDAY);
+		DateTime lastMonday = currentMonday.minusDays(DateTimeConstants.DAYS_PER_WEEK);
+		String startOfLastMonday = fmt.print(lastMonday);
+		
+		// end of last sunday
+		DateTime endOfDay = new DateTime().withTime(23, 59, 59, 0);
+		DateTime currentSunday = endOfDay.withDayOfWeek(DateTimeConstants.SUNDAY);
+		DateTime lastSunday = currentSunday.minusDays(DateTimeConstants.DAYS_PER_WEEK);
+		String endOFLastSunday = fmt.print(lastSunday);
+
+		String query = "select sum(co2_e) from MovesData " + "where user_id='" + userId + "' " + "and "
+				+ "(is_avg is null or is_avg=b'0')" + "and " + "timestamp between '" + startOfLastMonday
+				+ "' and '" + endOFLastSunday + "'";
+		
+		double lastWeekTotal = getDoubleByNativeQuery(query);
+		
+		System.out.println("Got last week total co2e: " + lastWeekTotal + " for userId " + userId);
+		
+		return lastWeekTotal;
 	}
 
 	/**
@@ -216,21 +250,26 @@ public class MovesDataManager extends AbstractManager<MovesData> {
 	}
 	
 	/*
-	 * To test out timeformatting
+	 * To test out things
 	 */
 	public static void main(String args[]) {
-		DateTime dt = new DateTime();
-		DateTime startOfDay = dt.withTimeAtStartOfDay();
+		
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		String dtStr = fmt.print(startOfDay);
+		
+		//DateTime startOfDay = new DateTime().withTime(0, 0, 0, 0).withDate(2017, 1, 30);
+		DateTime startOfDay = new DateTime().withTime(0, 0, 0, 0);
+		DateTime currentMonday = startOfDay.withDayOfWeek(DateTimeConstants.MONDAY);
+		DateTime lastMonday = currentMonday.minusDays(DateTimeConstants.DAYS_PER_WEEK);
+		
+		String dtStr = fmt.print(lastMonday);
+		
+		DateTime endOfDay = new DateTime().withTime(23, 59, 59, 0);
+		DateTime currentSunday = endOfDay.withDayOfWeek(DateTimeConstants.SUNDAY);
+		DateTime lastSunday = currentSunday.minusDays(DateTimeConstants.DAYS_PER_WEEK);
+		
+		String dtStr2 = fmt.print(lastSunday);
 		
 		System.out.println(dtStr);
-		
-		DateTime dt2 = new DateTime();
-		String dtStr2 = fmt.print(dt2);
-		
 		System.out.println(dtStr2);
-		
-		System.out.println(new Timestamp(System.currentTimeMillis()));
 	}
 }

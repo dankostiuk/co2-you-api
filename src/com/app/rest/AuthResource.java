@@ -78,7 +78,7 @@ public class AuthResource {
 		System.out.println("Processing login callback for code " + code);
 
 		if (code == null) {
-			return new SummaryResponse(400, null, null, "No 'code' param specified", null, 0, SummaryType.ERROR);
+			return new SummaryResponse(400, null, null, "No 'code' param specified", null, SummaryType.ERROR);
 		}
 
 		String uri = "https://app58285542.auth0.com/oauth/token";
@@ -97,7 +97,7 @@ public class AuthResource {
 		try {
 			post.setEntity(new UrlEncodedFormEntity(urlParameters));
 		} catch (UnsupportedEncodingException e) {
-			return new SummaryResponse(400, null, null, "Could not authorize using Auth0.", null, 0, SummaryType.ERROR);
+			return new SummaryResponse(400, null, null, "Could not authorize using Auth0.", null, SummaryType.ERROR);
 		}
 
 		System.out.println("Attempting to get Auth0 authorization_code response for code " + code);
@@ -114,6 +114,9 @@ public class AuthResource {
 		String accessToken = tokenResponse.getAccessToken();
 
 		System.out.println("Got accesstoken " + accessToken + " from Auth0 authorization_code response.");
+
+		//TODO: end this rest call and start any new ones with accesstoken
+		
 		System.out.println("Attempting to get userinfo json from Auth0 for accessToken " + accessToken);
 
 		String getUri = "https://app58285542.auth0.com/userinfo/?access_token=" + accessToken;
@@ -175,9 +178,15 @@ public class AuthResource {
 					List<MovesData> movesDataList = _movesDataManager.findLastSevenDaysMovesDataUserId(userId);
 					double average = _movesDataManager.getDailyAverageForUserId(userId).getCo2E();
 
-					return new SummaryResponse(200, name, null,
+					double movesLastWeekCo2e = _movesDataManager.getLastWeekTotalForUserId(userId);
+					
+					SummaryResponse response = new SummaryResponse(200, name, null,
 							"Your latest co2e value: " + movesDataList.get(movesDataList.size() - 1).getCo2E(),
-							movesDataList, average, SummaryType.INFO);
+							movesDataList, SummaryType.INFO);
+					
+					response.setMovesDailyAverageCo2e(average);
+					response.setMovesLastWeekCo2e(movesLastWeekCo2e);
+					return response;
 				} else {
 					System.out.println("User with userId " + userId + " has MovesUser but no movesAccessToken. INVESTIGATE");
 				}
@@ -204,7 +213,7 @@ public class AuthResource {
 		_contextCache.put(userId + "movesTokenMap", tokenMap);
 
 		return new SummaryResponse(200, name, userId,
-				"Please enter 8 digit PIN '" + tokenMap.get("code") + "' into Moves app and press Submit.", null, 0,
+				"Please enter 8 digit PIN '" + tokenMap.get("code") + "' into Moves app and press Submit.", null,
 				SummaryType.REGISTER);
 	}
 

@@ -14,6 +14,7 @@ public class SummaryResponse {
 
 	public List<MovesData> movesData;
 	public double movesDailyAverageCo2e;
+	public double movesLastWeekCo2e;
 
 	public String name;
 
@@ -37,14 +38,12 @@ public class SummaryResponse {
 		}
 	};
 
-	public SummaryResponse(int statusCode, String name, String userId, String message, List<MovesData> movesData,
-			double movesDailyAverageCo2e, SummaryType summaryType) {
+	public SummaryResponse(int statusCode, String name, String userId, String message, List<MovesData> movesData, SummaryType summaryType) {
 		this.statusCode = statusCode;
 		this.name = name;
 		this.userId = userId;
 		this.message = message;
 		this.movesData = movesData;
-		this.movesDailyAverageCo2e = movesDailyAverageCo2e;
 		this.summaryType = summaryType.getSummaryTypeCode();
 	}
 
@@ -90,6 +89,20 @@ public class SummaryResponse {
 	 */
 	public void setMovesDailyAverageCo2e(double movesDailyAverageCo2e) {
 		this.movesDailyAverageCo2e = movesDailyAverageCo2e;
+	}
+
+	/**
+	 * @return the movesLastWeekCo2e
+	 */
+	public double getMovesLastWeekCo2e() {
+		return movesLastWeekCo2e;
+	}
+
+	/**
+	 * @param movesLastWeekCo2e the movesLastWeekCo2e to set
+	 */
+	public void setMovesLastWeekCo2e(double movesLastWeekCo2e) {
+		this.movesLastWeekCo2e = movesLastWeekCo2e;
 	}
 
 	/**
